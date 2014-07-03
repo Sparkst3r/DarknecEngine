@@ -10,8 +10,6 @@ namespace Darknec {
 		void RegisterInitCallback(InitCallback callback) {
 			initCallback = callback;
 		}
-	
-
 
 		InitCallback getInitCallback() {
 			return initCallback;

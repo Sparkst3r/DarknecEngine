@@ -25,6 +25,10 @@ namespace Darknec {
 	extern LoggingManager DLogger;
 	extern RunState RUNSTATE;
 
+	extern int GLVersion_MAJOR;
+	extern int GLVersion_MINOR;
+	extern int GLSLVersion;
+
 }
 
 #endif

@@ -114,6 +114,7 @@
     <ClInclude Include="include\object\IKeyboardInput.h" />
     <ClInclude Include="include\object\IRenderable.h" />
     <ClInclude Include="include\object\Mesh.h" />
+    <ClInclude Include="include\object\Model.h" />
     <ClInclude Include="include\object\Object.h" />
     <ClInclude Include="include\object\ObjectCamera.h" />
     <ClInclude Include="include\object\ObjectMesh.h" />
@@ -127,14 +128,12 @@
     <ClInclude Include="include\render\gui\Gui.h" />
     <ClInclude Include="include\render\Material.h" />
     <ClInclude Include="include\render\shader\Shader.h" />
-    <ClInclude Include="include\render\Window.h" />
     <ClInclude Include="include\State.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\render\shader\ShaderTODO.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\math\Vec2.h" />
     <ClCompile Include="src\DarknecEngine.cpp" />
     <ClCompile Include="src\Darknec_Callbacks.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
@@ -144,6 +143,7 @@
     <ClCompile Include="src\object\fast_tiny_obj_loader.cc" />
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Mesh.cpp" />
+    <ClCompile Include="src\object\Model.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
     <ClCompile Include="src\object\ObjectCamera.cpp" />
     <ClCompile Include="src\object\ObjectMesh.cpp" />

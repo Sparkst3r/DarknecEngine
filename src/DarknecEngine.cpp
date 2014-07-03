@@ -8,16 +8,22 @@
 #include <LoggingManager.h>
 
 
-//Core Namespace
+/**
+* Darknec
+* @brief Base namespace
+*
+* Contains everything
+* @author Sparkst3r
+* @date 03 July 2014
+*/
 namespace Darknec {
-	using namespace Darknec::Callback;
 
 	Logger darknecLogger;
 
 	///Internal function
 	//Setup vital engine libraries and state.
 	//	$settings	: Settings structure
-	int InitEngine(Settings* settings) {
+	int InitEngine(Darknec::Callback::Settings* settings) {
 
 		///Setup SDL
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -41,6 +47,10 @@ namespace Darknec {
 		for (Darknec::Callback::WindowAttribute attr : settings->attributes) {
 			SDL_GL_SetAttribute(attr.attr, attr.value);
 		}
+
+		//TODO Remove this when texture loading is fixed
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
 		darknecLogger(LogLevel::LOG_LOG, "GL window attributes loaded");
 
 		///Create window
@@ -80,10 +90,50 @@ namespace Darknec {
 				darknecLogger(LogLevel::LOG_FATAL, "Could not initialise GLEW. Error: %s", glewGetErrorString(glewError));
 			}
 			else {
+				glGetIntegerv(GL_MAJOR_VERSION, &GLVersion_MAJOR);
+				glGetIntegerv(GL_MINOR_VERSION, &GLVersion_MINOR);
+
+				std::string contextString;
+				int contextAttribute;
+				SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextAttribute);
+				if (contextAttribute == SDL_GL_CONTEXT_PROFILE_COMPATIBILITY) {
+					contextString = "compatibility";
+				}
+				else {
+					contextString = "core";
+				}
+
+
+
+				int glslVersion = GLVersion_MAJOR * 100 + GLVersion_MINOR * 10;
+
+
+				if (glslVersion >= 330) {
+				}
+				else if (glslVersion >= 320) {
+					glslVersion = 150;
+				}
+				else if (glslVersion >= 310) {
+					glslVersion = 140;
+				}
+				else if (glslVersion >= 300) {
+					glslVersion = 130;
+				}
+				else if (glslVersion >= 210) {
+					glslVersion = 120;
+				}
+				else if (glslVersion >= 200) {
+					glslVersion = 110;
+				}
+				GLSLVersion = glslVersion;
+
+
 				darknecLogger(LogLevel::LOG_LOG, "GL Context set up successfully");
 				darknecLogger(LogLevel::LOG_INFO, "GPU vendor: %s", glGetString(GL_VENDOR));
-				darknecLogger(LogLevel::LOG_INFO, "Using OpenGL specification version: %s", glGetString(GL_VERSION));
+				darknecLogger(LogLevel::LOG_INFO, "Using OpenGL specification version: %s %s ", glGetString(GL_VERSION), contextString.c_str());
 				darknecLogger(LogLevel::LOG_INFO, "Using GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+				
+
 			}
 		}
 
@@ -136,25 +186,42 @@ namespace Darknec {
 	}
 
 
-	///Exposed function
-	//Start engine
-	//	$settings	: Settings structure
-	//	$argc		: Argument count
-	//	$argv		: Argument values
-	void DarknecInit(Settings* settings, int argc, char* argv[]) {
+
+}
+
+/**
+* Darknec
+* @brief Base namespace
+*
+* Contains everything
+* @author Sparkst3r
+* @date 03 July 2014
+*/
+namespace Darknec {
+	/**
+	* DarknecInit
+	* @brief Starts DarknecEngine
+	*
+	* Setup DarknecEngine with settings.
+	* This must be called after callback functions are defined.
+	*
+	* @param settings settings in which to set-up the engine
+	* @param argc argument count
+	* @param argv argument values
+	*/
+	void DarknecInit(Darknec::Callback::Settings* settings, int argc, char* argv[]) {
 
 		darknecLogger = DLogger.getLogger("DarknecEngine");
 
 		darknecLogger(LogLevel::LOG_SECTION, "============-START-=============");
 		darknecLogger(LogLevel::LOG_LOG, "Darknec starting up");
-		
+
 		int success = InitEngine(settings);
 		if (success != 0) {
 			darknecLogger(LogLevel::LOG_FATAL, "FATAL ERROR. Darknec could not initialise. Exit code: %i", success);
-			exit(success);
-
+			DarknecShutdown(success);
 		}
-		
+
 		darknecLogger(LogLevel::LOG_LOG, "Darknec started successfully");
 
 		darknecLogger(LogLevel::LOG_SECTION, "======-END DARKNEC SETUP-=======");
@@ -165,15 +232,20 @@ namespace Darknec {
 		}
 		else {
 			darknecLogger(LogLevel::LOG_FATAL, "Illegal State: NULL init method is not supported. Define an init method");
-			exit(5);
+			DarknecShutdown(5);
 		}
 
 		GameLoopBegin();
 	}
 
-	///Exposed function
-	//Shutdown engine.
-	//	$close		: Close code to shutdown with
+	/**
+	* DarknecShutdown
+	* @brief Shuts down DarknecEngine
+	*
+	* Shutdown DarknecEngine with a close code.
+	*
+	* @param close Code to quit with
+	*/
 	int DarknecShutdown(int close) {
 		if (close != 1 && close != 2 && close != 3 && close != 4) {
 			if (Darknec::Callback::getCleanupCallback() != NULL) {

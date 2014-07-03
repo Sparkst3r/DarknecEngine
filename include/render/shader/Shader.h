@@ -38,20 +38,99 @@ public:
 
 
 #pragma region Single Values
-	void setUniformFloat	(const char* location, float value);
-	void setUniformFloat2	(const char* location, float value, float value2);
-	void setUniformFloat3	(const char* location, float value, float value2, float value3);
-	void setUniformFloat4	(const char* location, float value, float value2, float value3, float value4);
+	/**
+	* Set float uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value float value
+	*/
+	void setUniformFloat(const char* location, float value);
+	/**
+	* Set 2 float uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value float value
+	* @param value2 float value 2
+	*/
+	void setUniformFloat2(const char* location, float value, float value2);
+	/**
+	* Set 3 float uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value float value
+	* @param value2 float value 2
+	* @param value3 float value 3
+	*/
+	void setUniformFloat3(const char* location, float value, float value2, float value3);
+	/**
+	* Set 4 float uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value float value
+	* @param value2 float value 2
+	* @param value3 float value 3
+	* @param value4 float value 4
+	*/
+	void setUniformFloat4(const char* location, float value, float value2, float value3, float value4);
 
-	void setUniformInt	(const char* location, int value);
-	void setUniformInt2	(const char* location, int value, int value2);
-	void setUniformInt3	(const char* location, int value, int value2, int value3);
-	void setUniformInt4	(const char* location, int value, int value2, int value3, int value4);
+	/**
+	* Set int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value int value
+	*/
+	void setUniformInt(const char* location, int value);
+	/**
+	* Set 2 int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value int value
+	* @param value2 int value 2
+	*/
+	void setUniformInt2(const char* location, int value, int value2);
+	/**
+	* Set 3 int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value int value
+	* @param value2 int value 2
+	* @param value3 int value 3
+	*/
+	void setUniformInt3(const char* location, int value, int value2, int value3);
+	/**
+	* Set 4 int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value int value
+	* @param value2 int value 2
+	* @param value3 int value 3
+	* @param value4 int value 4
+	*/
+	void setUniformInt4(const char* location, int value, int value2, int value3, int value4);
 
-	void setUniformUnsignedInt	(const char* location, unsigned int value);
-	void setUniformUnsignedInt2	(const char* location, unsigned int value, unsigned int value2);
-	void setUniformUnsignedInt3	(const char* location, unsigned int value, unsigned int value2, unsigned int value3);
-	void setUniformUnsignedInt4	(const char* location, unsigned int value, unsigned int value2, unsigned int value3, unsigned int value4);
+	/**
+	* Set unsigned int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value unsigned int value
+	*/
+	void setUniformUnsignedInt(const char* location, unsigned int value);
+	/**
+	* Set 2 unsigned int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value unsigned int value
+	* @param value2 unsigned int value 2
+	*/
+	void setUniformUnsignedInt2(const char* location, unsigned int value, unsigned int value2);
+	/**
+	* Set 3 unsigned int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value unsigned int value
+	* @param value2 unsigned int value 2
+	* @param value3 unsigned int value 3
+	*/
+	void setUniformUnsignedInt3(const char* location, unsigned int value, unsigned int value2, unsigned int value3);
+	/**
+	* Set 4 unsigned int uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value unsigned int value
+	* @param value2 unsigned int value 2
+	* @param value3 unsigned int value 3
+	* @param value4 unsigned int value 4
+	*/
+	void setUniformUnsignedInt4(const char* location, unsigned int value, unsigned int value2, unsigned int value3, unsigned int value4);
+
 
 #pragma endregion
 
@@ -87,7 +166,7 @@ public:
 
 #pragma endregion
 
-private :
+private:
 	GLuint ID;
 	Logger log = Darknec::DLogger.getLogger("Shader");
 
