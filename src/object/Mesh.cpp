@@ -15,7 +15,8 @@ using namespace glm;
 
 #include <soil.h>
 
-// Two UV coordinatesfor each vertex. They were created with Blender. You'll learn shortly how to do this yourself.
+//TODO Temp UV until loading is fixed properly
+
 static const GLfloat g_uv_buffer_data[] = {
 	0.000059f, 1.0f - 0.000004f,
 	0.000103f, 1.0f - 0.336048f,

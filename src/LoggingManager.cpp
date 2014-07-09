@@ -50,8 +50,8 @@ void LoggingManager::WINDOWSlog(std::vector<unsigned short> logColours, LogLevel
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	GetConsoleScreenBufferInfo(hstdout, &csbi);
 
-	char buffer[4096];
-	vsnprintf_s(buffer, 4096, format, varargs);
+	char buffer[8192];
+	vsnprintf_s(buffer, 8192, format, varargs);
 
 	std::string text = formatString(level, ownername, buffer) + "\n";
 

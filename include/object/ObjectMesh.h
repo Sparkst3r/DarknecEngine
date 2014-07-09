@@ -10,14 +10,14 @@ class ObjectMesh : public Object {
 
 public:
 
-	ObjectMesh(Mesh* mesh, Shader shader, UBO matrices);
+	ObjectMesh(Mesh* mesh, Shader* shader, UBO matrices);
 	~ObjectMesh();
 
 	void renderObject();
 
 private:
 	Mesh* model = NULL;
-	Shader shader;
+	Shader* shader;
 	UBO matrices;
 
 };

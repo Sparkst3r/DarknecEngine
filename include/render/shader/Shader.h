@@ -6,33 +6,25 @@
 #include <string>
 #include <render/GLTypeDef.h>
 
-struct ShaderFile {
-	ShaderFile(GLenum shaderType, const char* shaderFile) {
-		this->shaderType = shaderType;
-		this->shaderFile = shaderFile;
-	}
-
-	GLenum shaderType;
-	const char* shaderFile;
-};
-
+/**
+* Shader
+* 
+* GLSL shader
+*/
 class Shader {
-
 public:
 
 	Shader();
-	Shader(std::vector<ShaderFile*> shaders);
 
 	Shader(const char* filename);
-
+	~Shader();
 
 
 	void destroy();
+	void use();
 
 	AttrID getAttribute(const char* attrName);
 	UnifID getUniform(const char* uniformName);
-
-	void use();
 
 	void bindFragmentOutput(const char* location);
 
@@ -167,10 +159,16 @@ public:
 #pragma endregion
 
 private:
-	GLuint ID;
+	GLuint ID = 0;
 	Logger log = Darknec::DLogger.getLogger("Shader");
 
-	std::vector<const char*> preprocess(const char* raw);
+	//TODO fix shader error handling
+	//For sanity. Prevents console spam but messy hack.
+	std::vector<std::string> previousErrors;
+
+	std::vector<std::string> preprocess(std::string raw);
+
+	GLuint createShader(std::vector<std::string> stages, bool reload);
 
 };
 
