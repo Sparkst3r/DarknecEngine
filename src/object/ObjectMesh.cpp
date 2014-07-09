@@ -14,9 +14,10 @@ ObjectMesh::~ObjectMesh() {
 void ObjectMesh::renderObject() {
 	glm::mat4 matrix;
 	matrix = glm::scale(matrix, this->getScale());
-	matrix *= glm::mat4_cast(this->getOrientation());
+
 
 	matrix = glm::translate(matrix, this->getPosition());
+	matrix *= glm::mat4_cast(this->getOrientation());
 
 	glUniformMatrix4fv(4, 1, GL_FALSE, glm::value_ptr(matrix));
 	
