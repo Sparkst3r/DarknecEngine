@@ -10,7 +10,6 @@ class Component;
 class GameObject {
 
 public:
-	Logger* componentLogger;
 
 	GameObject();
 	~GameObject();

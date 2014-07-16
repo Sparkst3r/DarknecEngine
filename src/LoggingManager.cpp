@@ -1,80 +1,106 @@
+/**
+* @file LoggingManager.h
+* Manages logging to console and to file
+*/
+
 #include <LoggingManager.h>
-#include <stdarg.h>
-#include <iostream>
-#include <time.h>
-#include <fstream>
 
-void Logger::operator()(const char* format, ...) {;
-	va_list varArgs;
-	va_start(varArgs, format);
-	manager->WINDOWSlog(this->logColours, LogLevel::LOG_DEBUG, this->ownerName.c_str(), format, varArgs);
-	va_end(varArgs);
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+
+/**
+* Logging to console manager
+* Does not write to file
+*/
+LoggingManager::LoggingManager() : LoggingManager("") {}
+
+/**
+* Logging to console and file manager
+* Writes to specified file
+* @param file file to write to. Appends to this file everytime the game is run.
+*/
+LoggingManager::LoggingManager(const char* file) : file_(file) {
+	logColours_.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	logColours_.push_back(FOREGROUND_GREEN | FOREGROUND_BLUE);
+	logColours_.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	logColours_.push_back(FOREGROUND_RED | FOREGROUND_INTENSITY);
+	logColours_.push_back(BACKGROUND_RED);
+	logColours_.push_back(FOREGROUND_GREEN);
+	logColours_.push_back(FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 }
 
-void Logger::operator()(LogLevel level, const char* format, ...) {
-	va_list varArgs;
-	va_start(varArgs, format);
-	manager->WINDOWSlog(this->logColours, level, this->ownerName.c_str(), format, varArgs);
-	va_end(varArgs);
-}
-
-
-LoggingManager::LoggingManager() {}
-
-LoggingManager::LoggingManager(const char* file) {
-	this->file = file;
-}
-
+/**
+* Change file that the logger appends to
+* @param file file to change to.
+*/
 void LoggingManager::setFile(const char* file) {
-	this->file = file;
+	this->file_ = file;
 }
 
-Logger LoggingManager::getLogger(const char* owner) {
-	Logger loggerOwner;
-	loggerOwner.logColours.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-	loggerOwner.logColours.push_back(FOREGROUND_GREEN | FOREGROUND_BLUE);
-	loggerOwner.logColours.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-	loggerOwner.logColours.push_back(FOREGROUND_RED | FOREGROUND_INTENSITY);
-	loggerOwner.logColours.push_back(BACKGROUND_RED);
-	loggerOwner.logColours.push_back(FOREGROUND_GREEN);
-	loggerOwner.logColours.push_back(FOREGROUND_GREEN | FOREGROUND_BLUE | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
-
-	loggerOwner.manager = this;
-	loggerOwner.ownerName = owner;
-	return loggerOwner;
-
+/**
+* Log formatted text to console and file
+* Log level set to LOG_DEBUG
+* @param format formatting pattern using type specifiers. @see std::printf
+* @param variadic data
+*/
+void LoggingManager::operator()(const char* format, ...) {
+	va_list varArgs;
+	va_start(varArgs, format);
+	this->WINDOWSlog("", LogLevel::LOG_DEBUG, format, varArgs);
+	va_end(varArgs);
 }
 
-void LoggingManager::WINDOWSlog(std::vector<unsigned short> logColours, LogLevel level, const char* ownername, const char* format, va_list varargs) {
-	HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE); //Console Handle
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	GetConsoleScreenBufferInfo(hstdout, &csbi);
-
-	char buffer[8192];
-	vsnprintf_s(buffer, 8192, format, varargs);
-
-	std::string text = formatString(level, ownername, buffer) + "\n";
-
-	if (file != "") {
-		std::ofstream file(file, std::ios::app);
-		file << text;
-		file.close();
-	}
-
-	SetConsoleTextAttribute(hstdout, logColours[level]);
-	std::cout << text.c_str();
-
-	#ifdef _DEBUG
-		OutputDebugString(text.c_str());
-	#endif
-
-
-
-
-	SetConsoleTextAttribute(hstdout, csbi.wAttributes);
+/**
+* Log formatted text to console and file
+* @param level logging level
+* @param format formatting pattern using type specifiers. @see std::printf
+* @param variadic data
+*/
+void LoggingManager::operator()(LogLevel level, const char* format, ...) {
+	va_list varArgs;
+	va_start(varArgs, format);
+	this->WINDOWSlog("", level, format, varArgs);
+	va_end(varArgs);
 }
 
-std::string LoggingManager::formatString(LogLevel level, const char* ownername, char* buffer) {
+/**
+* Log formatted text to console and file
+* Log level set to LOG_DEBUG
+* @param owner tag log text with an owner.
+* @param format formatting pattern using type specifiers. @see std::printf
+* @param variadic data
+*/
+void LoggingManager::operator()(const char* owner, const char* format, ...) {
+	va_list varArgs;
+	va_start(varArgs, format);
+	this->WINDOWSlog(owner, LogLevel::LOG_DEBUG, format, varArgs);
+	va_end(varArgs);
+}
+
+/**
+* Log formatted text to console and file
+* @param owner tag log text with an owner.
+* @param level logging level
+* @param format formatting pattern using type specifiers. @see std::printf
+* @param variadic data
+*/
+void LoggingManager::operator()(const char* owner, LogLevel level, const char* format, ...) {
+	va_list varArgs;
+	va_start(varArgs, format);
+	this->WINDOWSlog(owner, level, format, varArgs);
+	va_end(varArgs);
+}
+
+/**
+* Format output text for printing to console and file
+*
+* @param owner name to use to identify where the log has been printed. eg. "DarknecEngine-Core" or "Achievement"
+* @param level the logging level to print text in.
+* @param buffer buffer containing pre formatted log text
+* @return the formatted string
+*/
+std::string LoggingManager::formatString(const char* owner, LogLevel level, char* buffer) {
 	//Get time
 	tm timeStruct;
 	time_t timet = time(0);
@@ -111,5 +137,43 @@ std::string LoggingManager::formatString(LogLevel level, const char* ownername, 
 
 	//Concat output
 	std::string bufferString(buffer);
-	return " " + levelString + "	" + timeString + "[" + ownername + "]" + bufferString;
+
+	return " " + levelString + "	" + timeString + "[" + owner + "]" + bufferString;
+}
+
+/**
+* Print log text to console and file for a windows environment/console
+*
+* @param owner name to use to identify where the log has been printed. eg. "DarknecEngine-Core" or "Achievement"
+* @param level the logging level to print text in.
+* @param format formatting pattern using type specifiers. @see std::printf
+* @param varargs data
+*/
+void LoggingManager::WINDOWSlog(const char* owner, LogLevel level, const char* format, va_list varargs) {
+#if defined(_WIN32)
+	HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE); //Console Handle
+	CONSOLE_SCREEN_BUFFER_INFO prevStateInfo;
+	GetConsoleScreenBufferInfo(hstdout, &prevStateInfo);
+
+	char buffer[8192];
+	vsnprintf_s(buffer, 8192, format, varargs);
+
+	std::string text = formatString(owner, level, buffer) + "\n";
+
+	if (this->file_ != "") {
+		std::ofstream file(this->file_, std::ios::app);
+		file << text;
+		file.close();
+	}
+
+	SetConsoleTextAttribute(hstdout, logColours_[level]);
+	std::cout << text.c_str();
+
+	#if defined(_DEBUG)
+	OutputDebugString(text.c_str());
+	#endif
+
+	SetConsoleTextAttribute(hstdout, prevStateInfo.wAttributes);
+#endif
+
 }

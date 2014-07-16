@@ -25,8 +25,6 @@
 #include <complex>
 
 namespace ObjLoader {
-	Logger logger;
-
 	struct vertex_index {
 		int vertIndex, textIndex, normIndex;
 		vertex_index() {};
@@ -63,7 +61,7 @@ namespace ObjLoader {
 		fopen_s(&file, filepath.c_str(), "r");
 
 		if (file == NULL) { //File could not be opened
-			logger(LogLevel::LOG_ERROR, "Cannot locate file : %s", filepath.c_str());
+			Darknec::logger("OBJLoader", LogLevel::LOG_ERROR, "Cannot locate file : %s", filepath.c_str());
 			return 1;
 		}
 		else {
@@ -395,7 +393,6 @@ namespace ObjLoader {
 
 
 	int LoadObj(std::vector<Shape>& shapes, const char* filename, const char* mtl_basepath) {
-		logger = Darknec::DLogger.getLogger("ObjLoader");
 
 		shapes.clear();
 
@@ -403,7 +400,7 @@ namespace ObjLoader {
 		fopen_s(&file, filename, "r");
 
 		if (file == NULL) { //File could not be opened
-			logger(LogLevel::LOG_ERROR, "Cannot locate file : %s", filename);
+			Darknec::logger("OBJLoader", LogLevel::LOG_ERROR, "Cannot locate file : %s", filename);
 			return 1;
 		}
 
@@ -415,7 +412,7 @@ namespace ObjLoader {
 
 		int startTime = SDL_GetTicks();
 		int error = LoadObj(shapes, file, matFileReader);
-		logger(LogLevel::LOG_INFO, "Loaded OBJ file: %s; Took : %i milliseconds.", filename, (SDL_GetTicks() - startTime));
+		Darknec::logger("OBJLoader", LogLevel::LOG_INFO, "Loaded OBJ file: %s; Took : %i milliseconds.", filename, (SDL_GetTicks() - startTime));
 
 		return error;
 	}
@@ -611,7 +608,7 @@ namespace CObjLoader {
 
 
 	std::vector<Shape> read(std::ifstream& stream) {
-		Logger clogger = Darknec::DLogger.getLogger("CObjLoader");
+		//Logger clogger = Darknec::DLogger.getLogger("CObjLoader");
 
 		int start = SDL_GetTicks();
 
@@ -647,7 +644,7 @@ namespace CObjLoader {
 			stream.read((char*) &shapes[shapeIndex].material.specular[0], 3 * dataWidth);
 		}
 
-		clogger(LogLevel::LOG_INFO, "Took %i milliseconds", SDL_GetTicks() - start);
+		Darknec::logger("COBJLoader", LogLevel::LOG_INFO, "Took %i milliseconds", SDL_GetTicks() - start);
 
 		stream.close();
 		return shapes;

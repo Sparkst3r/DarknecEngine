@@ -9,11 +9,8 @@ class Component {
 public:
 	virtual ~Component() = 0; //Dummy destructor
 
-	void setLogger(Logger* logger);
-
 protected:
 	GameObject* container_;
-	Logger* componentLogger;
 
 };
 

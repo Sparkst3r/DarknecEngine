@@ -22,6 +22,7 @@ public:
 
 	void destroy();
 	void use();
+	void reload();
 
 	AttrID getAttribute(const char* attrName);
 	UnifID getUniform(const char* uniformName);
@@ -160,7 +161,7 @@ public:
 
 private:
 	GLuint ID = 0;
-	Logger log = Darknec::DLogger.getLogger("Shader");
+	const char* filename;
 
 	//TODO fix shader error handling
 	//For sanity. Prevents console spam but messy hack.

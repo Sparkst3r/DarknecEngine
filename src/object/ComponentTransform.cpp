@@ -2,7 +2,6 @@
 
 ComponentTransform::ComponentTransform(GameObject* container) {
 	this->container_ = container;
-	this->componentLogger = container->componentLogger;
 }
 
 

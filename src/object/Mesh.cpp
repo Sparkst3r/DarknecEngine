@@ -105,6 +105,4 @@ void Mesh::Render() {
 	glBindVertexArray(this->vao);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->elementArrays);
 	glDrawElements(GL_TRIANGLES, indiciescount, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-
 }

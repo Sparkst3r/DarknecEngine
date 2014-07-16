@@ -27,8 +27,6 @@ void Model::loadObj(FILE* file) {
 }
 
 Model::Model(const char* filename, FileType type) {
-	Logger logger = Darknec::DLogger.getLogger("Mesh");
-
 	FILE* file;
 	fopen_s(&file, filename, "r");
 
@@ -36,7 +34,7 @@ Model::Model(const char* filename, FileType type) {
 		loadObj(file);
 	}
 	else {
-		logger(LogLevel::LOG_ERROR, "Mesh file not found. File: %s", filename);
+		Darknec::logger("Mesh", LogLevel::LOG_ERROR, "Mesh file not found. File: %s", filename);
 	}
 
 

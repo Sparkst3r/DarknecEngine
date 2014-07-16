@@ -14,12 +14,33 @@
 Shader::Shader() {
 }
 
+
 Shader::~Shader() {
 	//TODO fix destructor once stripping out user shader manipulation. Engine hasnt initialised when global variables are being created and causes premature destruction.
 }
 
 void Shader::destroy() {
 	glDeleteProgram(this->ID);
+}
+
+void Shader::reload() {
+	std::ifstream file(filename);
+
+	if (file) {
+		Darknec::logger("Shader", LogLevel::LOG_INFO, "Reloaded shader file: %s", filename);
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+
+		std::vector<std::string> stages = preprocess(buffer.str());
+
+		ID = createShader(stages, true);
+		this->bindFragmentOutput("colour");
+
+		file.close();
+	}
+	else {
+		Darknec::logger(LogLevel::LOG_ERROR, "Couldn't reload shader file: %s", filename);
+	}
 }
 
 /**
@@ -44,10 +65,11 @@ void Shader::use() {
 * @param filename shader file to load
 */
 Shader::Shader(const char* filename) {
+	this->filename = filename;
 	std::ifstream file(filename);
 
 	if (file) {
-		log(LogLevel::LOG_INFO, "Found shader file: %s", filename);
+		Darknec::logger("Shader", LogLevel::LOG_INFO, "Found shader file: %s", filename);
 		std::stringstream buffer;
         buffer << file.rdbuf();
 
@@ -59,7 +81,7 @@ Shader::Shader(const char* filename) {
         file.close();
 	}
 	else {
-		log(LogLevel::LOG_ERROR, "Couldn't find shader file: %s", filename);
+		Darknec::logger("Shader", LogLevel::LOG_ERROR, "Couldn't find shader file: %s", filename);
 	}
 
 }
@@ -78,62 +100,21 @@ GLuint Shader::createShader(std::vector<std::string> stages, bool reload) {
 	std::vector<GLuint> shaderIDs;
 	std::string shadersUsed;
 
-	//TODO This could really be more efficient as a for loop in itself
-	#pragma region Compile stages
-	if (stages[0] != "") {
-		shadersUsed += "VERT ";
-		GLuint stageTemp = glCreateShader(GL_VERTEX_SHADER);
-		
-		const char* stageChar = stages[0].c_str();
-		glShaderSource(stageTemp, 1, &stageChar, NULL);
-		glCompileShader(stageTemp);
-		glAttachShader(tempID, stageTemp);
-		shaderIDs.push_back(stageTemp);
+	GLenum shaderTypes[] = {GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, GL_FRAGMENT_SHADER};
+	std::string typeStrings[] = {"VERT ", "TESSCONT ", "TESSEVAL ", "GEOM ", "FRAG "};
+	for (int stage = 0; stage < 5; stage++) {
+		if (stages[stage] != "") { //Ensure shader has content
+			shadersUsed += typeStrings[stage]; //Append shader type string
+			GLuint stageTemp = glCreateShader(shaderTypes[stage]); //Make shader with a type
+			const char* stageChar = stages[stage].c_str(); 
+			glShaderSource(stageTemp, 1, &stageChar, NULL);
+			glCompileShader(stageTemp);
+			glAttachShader(tempID, stageTemp);
+			shaderIDs.push_back(stageTemp);
+		}
 	}
-	if (stages[1] != "") {
-		shadersUsed += "TESSCONT ";
-		GLuint stageTemp;
-		stageTemp = glCreateShader(GL_TESS_CONTROL_SHADER);
-		const char* stageChar = stages[1].c_str();
-		glShaderSource(stageTemp, 1, &stageChar, NULL);
-		glCompileShader(stageTemp);
-		glAttachShader(tempID, stageTemp);
-		shaderIDs.push_back(stageTemp);
-	}
-	if (stages[2] != "") {
-		shadersUsed += "TESSEVAL ";
-		GLuint stageTemp;
-		stageTemp = glCreateShader(GL_TESS_EVALUATION_SHADER);
-		const char* stageChar = stages[2].c_str();
-		glShaderSource(stageTemp, 1, &stageChar, NULL);
-		glCompileShader(stageTemp);
-		glAttachShader(tempID, stageTemp);
-		shaderIDs.push_back(stageTemp);
-	}
-	if (stages[3] != "") {
-		shadersUsed += "GEOM ";
-		GLuint stageTemp;
-		stageTemp = glCreateShader(GL_GEOMETRY_SHADER);
-		const char* stageChar = stages[3].c_str();
-		glShaderSource(stageTemp, 1, &stageChar, NULL);
-		glCompileShader(stageTemp);
-		glAttachShader(ID, stageTemp);
-		shaderIDs.push_back(stageTemp);
-	}
-	if (stages[4] != "") {
-		shadersUsed += "FRAG ";
-		GLuint stageTemp = glCreateShader(GL_FRAGMENT_SHADER);
-		const char* stageChar = stages[4].c_str();
-		glShaderSource(stageTemp, 1, &stageChar, NULL);
-		glCompileShader(stageTemp);
-		glAttachShader(tempID, stageTemp);
-		shaderIDs.push_back(stageTemp);
-	}
-	#pragma endregion
 
 	glLinkProgram(tempID);
-
-	#pragma region Print Link Status
 
 	GLint linkStatus;
 	GLint infoLogLength;
@@ -148,14 +129,12 @@ GLuint Shader::createShader(std::vector<std::string> stages, bool reload) {
 	if (infoLogLength > 1) {
 		GLchar* strInfoLog = new GLchar[infoLogLength + 1];
 		glGetProgramInfoLog(tempID, infoLogLength, NULL, strInfoLog);
-		log(level, "Shader link log: \n %s", strInfoLog);
+		Darknec::logger(level, "Shader link log: \n %s", strInfoLog);
 		delete strInfoLog;
 	}
 	else {
-		log(LogLevel::LOG_INFO, "Linked shader with stages: %s", shadersUsed.c_str());
+		Darknec::logger(LogLevel::LOG_INFO, "Linked shader with stages: %s", shadersUsed.c_str());
 	}
-
-	#pragma endregion
 
 	for (GLuint shaderID : shaderIDs) {
 		glDetachShader(tempID, shaderID);
@@ -269,10 +248,6 @@ std::vector<std::string> Shader::preprocess(std::string raw) {
 		stages[4] += "\n";
 	}
 
-
-
-
-
 	return stages;
 }
 
@@ -282,10 +257,23 @@ std::vector<std::string> Shader::preprocess(std::string raw) {
 * @return ID representing the address of the variable
 */
 AttrID Shader::getAttribute(const char* attrName) {
-	AttrID attributeID = glGetAttribLocation(this->ID, attrName);
-	if (attributeID == -1) {
-		std::string logString = std::string("Could not bind attribute : ") + attrName;
-		SDL_LogWarn(0, logString.c_str());
+	AttrID attributeID = glGetUniformLocation(this->ID, attrName);
+
+	bool shouldPrint = true;
+
+	//TODO seriously fix this >.<
+	//////////////////Begin hack /////////////////
+	for (std::string str : previousErrors) {
+
+		if (str == (std::string("Could not bind attribute: ") + std::string(attrName))) {
+			shouldPrint = false;
+		}
+	}
+	//////////////////End hack /////////////////
+
+	if (attributeID == -1 && shouldPrint) {
+		previousErrors.push_back((std::string("Could not bind attribute: ") + std::string(attrName)));
+		Darknec::logger("Shader", LogLevel::LOG_WARN, "Could not bind attribute: %s", attrName);
 	}
 	return attributeID;
 }
@@ -302,7 +290,6 @@ UnifID Shader::getUniform(const char* uniformName) {
 	//TODO seriously fix this >.<
 	//////////////////Begin hack /////////////////
 	for (std::string str : previousErrors) {
-
 		if (str == (std::string("Could not bind uniform: ") + std::string(uniformName))) {
 			shouldPrint = false;
 		}
@@ -311,7 +298,7 @@ UnifID Shader::getUniform(const char* uniformName) {
 
 	if (uniformID == -1 && shouldPrint) {
 		previousErrors.push_back((std::string("Could not bind uniform: ") + std::string(uniformName)));
-		log(LogLevel::LOG_ERROR, "Could not bind uniform: %s", uniformName);
+		Darknec::logger("Shader", LogLevel::LOG_WARN, "Could not bind uniform: %s", uniformName);
 	}
 	return uniformID;
 }

@@ -7,7 +7,6 @@
 ComponentCamera::ComponentCamera(GameObject* container, const char* positionID) {
 	this->container_ = container;
 	this->positionID_ = positionID;
-	this->componentLogger = container->componentLogger;
 }
 
 

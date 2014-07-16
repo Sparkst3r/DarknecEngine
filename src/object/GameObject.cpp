@@ -1,9 +1,7 @@
 #include <object/GameObject.h>
 
 
-GameObject::GameObject() {
-	this->componentLogger = &Darknec::DLogger.getLogger("Component");
-}
+GameObject::GameObject() {}
 
 GameObject::~GameObject() {
 	for (std::pair<const char*, Component*> comp : components) {
