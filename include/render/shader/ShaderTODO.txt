@@ -1,3 +1,0 @@
-GLSL hotswap reload of shader file.
-Save working copy of shader file in shader object if compiled successfully.
-If it doesnt compile, recompile with working shader code

@@ -3,8 +3,11 @@
 
 #include <vector>
 #include <physics/BulletTypeDef.h>
+#include <object/GameObject.h>
 #include <object/Object.h>
 #include <object/ObjectCamera.h>
+#include <object/ComponentTransform.h>
+#include <object/ComponentPhysics.h>
 #include <physics/IKinematicPhysicsObject.h>
 #include <object/ObjectMesh.h>
 #include <hash_map>
@@ -17,11 +20,14 @@ public:
 
 	void spawnObject(Object* object, glm::vec3 coordinates);
 
+	void spawnObject(GameObject* object, glm::vec3 coordinates, const char* positionID, const char* physicsID);
+
+
 	void renderAllObjects();
 
 	void setGravity(btVector3 &gravityVector);
 
-	void requestUpdate();
+	void stepPhysicsWorld(btScalar timeStep, btScalar fixedTimeStep);
 
 
 private:
@@ -32,6 +38,8 @@ private:
 
 
 	std::vector<Object*> objects;
+
+	std::vector<GameObject*> gameObjects;
 
 };
 

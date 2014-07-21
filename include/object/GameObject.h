@@ -7,15 +7,35 @@
 
 class Component;
 
+/**
+* @class GameObject GameObject.h "include/object/GameObject.h"
+* @brief Core game object
+*
+* Base object for everything in a game
+*
+*/
 class GameObject {
 
 public:
 
-	GameObject();
+	/**
+	* Destructor
+	* Performs iteration over Component map and deletes components
+	*/
 	~GameObject();
 
 	Component* getComponent(const char* ID);
+
+	template <typename T>
+	T* getCastComponent(const char* ID) {
+		return dynamic_cast<T*>(getComponent(ID));
+	}
+	
+
 	const char* registerComponent(Component* component, const char* ID);
+	
+
+
 
 private:
 

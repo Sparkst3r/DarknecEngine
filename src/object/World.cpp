@@ -28,6 +28,21 @@ void World::spawnObject(Object* object, glm::vec3 coordinates) {
 	objects.push_back(object);
 }
 
+void World::spawnObject(GameObject* object, glm::vec3 coordinates, const char* positionID, const char* physicsID) {
+	Component* compTrans = object->getComponent(positionID);
+	ComponentTransform* trans = dynamic_cast<ComponentTransform*>(compTrans);
+	if (trans != NULL) {
+		trans->setPosition(coordinates);
+	}
+
+	Component* compPhys = object->getComponent(physicsID);
+	ComponentPhysics* phys = dynamic_cast<ComponentPhysics*>(compPhys);
+	if (phys != NULL) {
+		physicsWorld->addRigidBody(phys->fallRigidBody_);
+	}
+	gameObjects.push_back(object);
+}
+
 void World::renderAllObjects() {
 
 	for (Object* object : objects) {
@@ -38,7 +53,17 @@ void World::renderAllObjects() {
 	}
 }
 
-void World::requestUpdate() {
+void World::stepPhysicsWorld(btScalar timeStep, btScalar fixedTimeStep) {
+	this->physicsWorld->stepSimulation(timeStep, fixedTimeStep);
+
+	for (GameObject* object : gameObjects) {
+		Component* compPhys = object->getComponent("physics"); //TODO dont hard code id. Fix when data driven files are added
+		ComponentPhysics* phys = dynamic_cast<ComponentPhysics*>(compPhys);
+		if (phys != NULL) {
+			phys->update();
+		}
+	}
+
 	for (Object* object : objects) {
 		object->updatePosition();
 	}

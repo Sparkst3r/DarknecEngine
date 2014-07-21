@@ -7,7 +7,9 @@
 
 class Component {
 public:
-	virtual ~Component() = 0; //Dummy destructor
+	virtual ~Component() {};
+
+	virtual void update() = 0;
 
 protected:
 	GameObject* container_;

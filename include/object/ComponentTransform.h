@@ -10,6 +10,8 @@ class ComponentTransform : public Component {
 public:
 	ComponentTransform(GameObject* container);
 
+	virtual void update() {}
+
 	glm::vec3 getPosition() const;
 	glm::fquat getOrientation() const;
 	glm::vec3 getScale() const;

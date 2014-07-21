@@ -104,10 +104,13 @@
     <ClInclude Include="extern\rapidXML\rapidxml_utils.hpp" />
     <ClInclude Include="include\DarknecEngine.h" />
     <ClInclude Include="include\Darknec_Callbacks.h" />
+    <ClInclude Include="include\GLMBullet.h" />
     <ClInclude Include="include\KeyHandler.h" />
     <ClInclude Include="include\LoggingManager.h" />
     <ClInclude Include="include\object\Component.h" />
     <ClInclude Include="include\object\ComponentCamera.h" />
+    <ClInclude Include="include\object\ComponentMesh.h" />
+    <ClInclude Include="include\object\ComponentPhysics.h" />
     <ClInclude Include="include\object\ComponentTransform.h" />
     <ClInclude Include="include\object\fast_tiny_obj_loader.h" />
     <ClInclude Include="include\object\GameObject.h" />
@@ -131,14 +134,12 @@
     <ClInclude Include="include\State.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="include\render\shader\ShaderTODO.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\DarknecEngine.cpp" />
     <ClCompile Include="src\Darknec_Callbacks.cpp" />
+    <ClCompile Include="src\GLMBullet.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
-    <ClCompile Include="src\object\Component.cpp" />
     <ClCompile Include="src\object\ComponentCamera.cpp" />
+    <ClCompile Include="src\object\ComponentPhysics.cpp" />
     <ClCompile Include="src\object\ComponentTransform.cpp" />
     <ClCompile Include="src\object\fast_tiny_obj_loader.cc" />
     <ClCompile Include="src\object\GameObject.cpp" />

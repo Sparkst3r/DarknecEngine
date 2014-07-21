@@ -10,6 +10,8 @@ class ComponentCamera : public Component {
 public:
 	ComponentCamera(GameObject* container, const char* positionID);
 
+	virtual void update() {}
+
 	glm::mat4 generateViewMatrix();
 	glm::mat4 generateProjMatrix();
 
