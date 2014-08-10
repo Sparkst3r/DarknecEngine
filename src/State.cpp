@@ -11,7 +11,10 @@ namespace Darknec {
 	SDL_Window* window;
 	SDL_GLContext glContext;
 
-	extern bool SDLOK = false;
-	extern bool SDLIMGOK = false;
+	bool SDLOK = false;
+	bool SDLIMGOK = false;
+
+	ComponentRegistry* componentFactory = new ComponentRegistry();
+
 
 }

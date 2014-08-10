@@ -5,6 +5,11 @@
 
 #include <DarknecEngine.h>
 
+#include <component/ComponentTransform.h>
+#include <rapidxml/rapidxml.hpp>
+#include <hash_map>
+
+
 /**
 * @namespace Darknec
 * @brief Base namespace
@@ -24,6 +29,127 @@ namespace Darknec {
 	*/
 	namespace detail {
 
+		Darknec::Callback::Settings* loadSettings() {
+			using namespace rapidxml;
+
+			std::hash_map<std::string, SDL_WindowFlags> flagMap;
+			flagMap["WINDOW_SHOWN"] = SDL_WindowFlags::SDL_WINDOW_SHOWN;
+			flagMap["WINDOW_RESIZABLE"] = SDL_WindowFlags::SDL_WINDOW_RESIZABLE;
+
+			std::hash_map<std::string, SDL_GLattr> attrMap;
+			attrMap["GL_RED_SIZE"] = SDL_GLattr::SDL_GL_RED_SIZE;
+			attrMap["GL_GREEN_SIZE"] = SDL_GLattr::SDL_GL_GREEN_SIZE;
+			attrMap["GL_BLUE_SIZE"] = SDL_GLattr::SDL_GL_BLUE_SIZE;
+			attrMap["GL_ALPHA_SIZE"] = SDL_GLattr::SDL_GL_ALPHA_SIZE;
+			attrMap["GL_BUFFER_SIZE"] = SDL_GLattr::SDL_GL_BUFFER_SIZE;
+			attrMap["GL_DOUBLEBUFFER"] = SDL_GLattr::SDL_GL_DOUBLEBUFFER;
+			attrMap["GL_STENCIL_SIZE"] = SDL_GLattr::SDL_GL_STENCIL_SIZE;
+			attrMap["GL_CONTEXT_MAJOR"] = SDL_GLattr::SDL_GL_CONTEXT_MAJOR_VERSION;
+			attrMap["GL_CONTEXT_MINOR"] = SDL_GLattr::SDL_GL_CONTEXT_MINOR_VERSION;
+			attrMap["GL_DEPTH_SIZE"] = SDL_GLattr::SDL_GL_DEPTH_SIZE;
+
+			
+
+			std::ifstream settingsStream = std::ifstream("Settings.xml");
+			if (settingsStream.good()) {
+				Darknec::Callback::Settings* settings = new Darknec::Callback::Settings();
+				Uint32 windowFlags = SDL_WindowFlags::SDL_WINDOW_OPENGL;
+
+
+				xml_document<> doc;
+				xml_node<>* root_node;
+
+				std::stringstream stringStream;
+				stringStream << settingsStream.rdbuf();
+				std::string xmlDataString = stringStream.str();
+				std::vector<char> data(xmlDataString.begin(), xmlDataString.end());
+				data.push_back('\0');
+				doc.parse<0>(&data[0]);
+
+				root_node = doc.first_node("Settings"); //Root node
+
+				for (xml_node<>* settingsIter = root_node->first_node(); settingsIter; settingsIter = settingsIter->next_sibling()) {
+
+					if (std::string(settingsIter->name()) == std::string("Window")) {
+						for (xml_node<>* windowIter = settingsIter->first_node(); windowIter; windowIter = windowIter->next_sibling()) {
+							if (std::string(windowIter->name()) == std::string("WindowName")) {
+								settings->windowName = std::string(windowIter->value());
+							}
+							else if (std::string(windowIter->name()) == std::string("WindowWidth")) {
+								settings->windowWidth = atoi(std::string(windowIter->value()).c_str());
+							}
+							else if (std::string(windowIter->name()) == std::string("WindowHeight")) {
+								settings->windowHeight = atoi(std::string(windowIter->value()).c_str());
+							}
+							else if (std::string(windowIter->name()) == std::string("WindowX")) {
+								if (std::string(windowIter->value()) == std::string("CENTRE") || std::string(windowIter->value()) == std::string("CENTER")) {
+									settings->windowX = SDL_WINDOWPOS_CENTERED;
+								}
+								else {
+									settings->windowX = atoi(std::string(windowIter->value()).c_str());
+								}
+							}
+							else if (std::string(windowIter->name()) == std::string("WindowY")) {
+								if (std::string(windowIter->value()) == std::string("CENTRE") || std::string(windowIter->value()) == std::string("CENTER")) {
+									settings->windowY = SDL_WINDOWPOS_CENTERED;
+								}
+								else {
+									settings->windowY = atoi(std::string(windowIter->value()).c_str());
+								}
+							}
+							else if (std::string(windowIter->name()) == std::string("WindowAttribute")) {
+								xml_attribute<char>* attrName = windowIter->first_attribute();
+								std::string str = std::string(attrName->value());
+								if (!str.empty()) {
+									SDL_GLattr glAttr = attrMap[str];
+									Darknec::logger("Settings Loader", LogLevel::LOG_LOG, "Window Attribute: '%s' set to %s", str.c_str(), std::string(windowIter->value()).c_str());
+									settings->attributes.push_back(Darknec::Callback::WindowAttribute(glAttr, atoi(std::string(windowIter->value()).c_str())));
+								}
+							}
+							else if (std::string(windowIter->name()) == std::string("WindowFlag")) {
+								std::string str = std::string(windowIter->value());
+								Darknec::logger("Settings Loader", LogLevel::LOG_LOG, "Window Flag: %s.", str.c_str());
+								windowFlags |= flagMap[str];
+							}
+						}
+					}
+				}
+					/*else if (std::string(gameObjectIter->name()) == std::string("components")) {
+						for (xml_node<>* componentIter = gameObjectIter->first_node(); componentIter; componentIter = componentIter->next_sibling()) {
+							if (std::string(componentIter->name()) == std::string("component")) {
+
+								xml_attribute<char>* attrType = componentIter->first_attribute();
+								xml_attribute<char>* attrName = attrType->next_attribute();
+
+								if (std::string(attrType->name()) == std::string("type") && std::string(attrName->name()) == std::string("name")) {
+									std::string s = std::string(attrType->value());
+									Component* component = Darknec::componentFactory->createComponent(s, object);
+									if (component != NULL) {
+										std::string compName = std::string(attrName->value());
+
+										component->read(componentIter);
+										object->registerComponent(component, compName.c_str());
+									}
+									else {
+										Darknec::logger(LogLevel::LOG_WARN, "Component of type '%s' requested by GameObject data file '%s' does not exist in component registry", s.c_str(), file);
+									}
+								}
+							}*/
+					//	}
+					//}
+				//}
+
+				settings->windowFlags = windowFlags;
+
+				return settings;
+			}
+			else {
+				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Settings.xml doesn't exist in local directory. Please provide a Settings.xml");
+				DarknecShutdown(3);
+			}
+			return NULL;
+		}
+
 		/**
 		* InitEngine
 		* Setup engine libs and state
@@ -31,7 +157,8 @@ namespace Darknec {
 		* @param settings settings for engine
 		* @return error state. Set to 0 if setup is successful
 		*/
-		int InitEngine(Darknec::Callback::Settings* settings) {
+		int InitEngine() {
+			Darknec::Callback::Settings* settings = loadSettings();
 
 			///Setup SDL
 			if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -213,12 +340,12 @@ namespace Darknec {
 	* @param argc argument count
 	* @param argv argument values
 	*/
-	void DarknecInit(Darknec::Callback::Settings* settings, int argc, char* argv[]) {
+	void DarknecInit(int argc, char* argv[]) {
 
 		Darknec::logger("DarknecEngine", LogLevel::LOG_SECTION, "============-START-=============");
 		Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "Darknec starting up");
 
-		int success = Darknec::detail::InitEngine(settings);
+		int success = Darknec::detail::InitEngine();
 		if (success != 0) {
 			Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "FATAL ERROR. Darknec could not initialise. Exit code: %i", success);
 			DarknecShutdown(success);
@@ -237,6 +364,8 @@ namespace Darknec {
 			DarknecShutdown(5);
 		}
 
+
+
 		Darknec::detail::GameLoopBegin();
 	}
 
@@ -250,6 +379,11 @@ namespace Darknec {
 	* @return always 0. Satisfies main()'s return value. Ensures or at least puts off tampering of state in main().
 	*/
 	int DarknecShutdown(int close) {
+		if (Darknec::componentFactory != NULL) {
+			delete Darknec::componentFactory;
+		}
+
+
 		//Got past engine initialisation
 		if (close > 4) {
 			if (Darknec::Callback::getCleanupCallback() != NULL) {

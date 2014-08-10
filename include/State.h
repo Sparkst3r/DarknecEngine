@@ -2,6 +2,8 @@
 #define DARKNEC_STATE_H
 #include <DarknecEngine.h>
 
+class ComponentRegistry;
+
 /**
 * Darknec
 * @brief Base namespace
@@ -35,6 +37,8 @@ namespace Darknec {
 	extern bool SDLOK;
 	extern bool SDLIMGOK;
 
+	//TODO put somewhere safer and more relevant.
+	extern ComponentRegistry* componentFactory;
 }
 
 #endif

@@ -53,8 +53,8 @@ void World::renderAllObjects() {
 	}
 }
 
-void World::stepPhysicsWorld(btScalar timeStep, btScalar fixedTimeStep) {
-	this->physicsWorld->stepSimulation(timeStep, fixedTimeStep);
+void World::stepPhysicsWorld(btScalar timeStep, int maxSubSteps) {
+	this->physicsWorld->stepSimulation(timeStep, maxSubSteps);
 
 	for (GameObject* object : gameObjects) {
 		Component* compPhys = object->getComponent("physics"); //TODO dont hard code id. Fix when data driven files are added

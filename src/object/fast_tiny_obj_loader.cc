@@ -345,8 +345,8 @@ namespace ObjLoader {
 
 			//Illumination model
 			else if (!strcmp(lineTag, "illum")) {
-				float illumination;
-				fscanf_s(file, "%f\n", &illumination);
+				int illumination;
+				fscanf_s(file, "%i\n", &illumination);
 				material.illum = illumination;
 			}
 			//Dissolve / Transparency

@@ -70,8 +70,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;SDL2.lib;SDL2main.lib;glew32.lib;soil.lib;assimpd.lib;zlibstaticd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\SDL\lib\x86;..\GLEW\lib;..\SOIL\;..\AssImp\build\contrib\zlib\Debug;..\AssImp\build\code\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;SDL2.lib;SDL2main.lib;glew32.lib;soil.lib;assimpd.lib;zlibstaticd.lib;lua.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\SDL\lib\x86;..\GLEW\lib;..\Lua\lib;..\SOIL\;..\AssImp\build\contrib\zlib\Debug;..\AssImp\build\code\Debug</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -102,24 +102,23 @@
     <ClInclude Include="extern\rapidXML\rapidxml_iterators.hpp" />
     <ClInclude Include="extern\rapidXML\rapidxml_print.hpp" />
     <ClInclude Include="extern\rapidXML\rapidxml_utils.hpp" />
+    <ClInclude Include="include\component\Component.h" />
+    <ClInclude Include="include\component\ComponentRegistry.h" />
+    <ClInclude Include="include\component\ComponentCamera.h" />
+    <ClInclude Include="include\component\ComponentMesh.h" />
+    <ClInclude Include="include\component\ComponentPhysics.h" />
+    <ClInclude Include="include\component\ComponentTransform.h" />
     <ClInclude Include="include\DarknecEngine.h" />
     <ClInclude Include="include\Darknec_Callbacks.h" />
-    <ClInclude Include="include\GLMBullet.h" />
     <ClInclude Include="include\KeyHandler.h" />
     <ClInclude Include="include\LoggingManager.h" />
-    <ClInclude Include="include\object\Component.h" />
-    <ClInclude Include="include\object\ComponentCamera.h" />
-    <ClInclude Include="include\object\ComponentMesh.h" />
-    <ClInclude Include="include\object\ComponentPhysics.h" />
-    <ClInclude Include="include\object\ComponentTransform.h" />
     <ClInclude Include="include\object\fast_tiny_obj_loader.h" />
     <ClInclude Include="include\object\GameObject.h" />
-    <ClInclude Include="include\object\IKeyboardInput.h" />
-    <ClInclude Include="include\object\IRenderable.h" />
     <ClInclude Include="include\object\Mesh.h" />
     <ClInclude Include="include\object\Model.h" />
     <ClInclude Include="include\object\Object.h" />
     <ClInclude Include="include\object\ObjectCamera.h" />
+    <ClInclude Include="include\object\ObjectFileParser.h" />
     <ClInclude Include="include\object\ObjectMesh.h" />
     <ClInclude Include="include\object\ObjLoader.h" />
     <ClInclude Include="include\object\tiny_obj_loader.h" />
@@ -134,19 +133,20 @@
     <ClInclude Include="include\State.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\component\ComponentRegistry.cpp" />
+    <ClCompile Include="src\component\ComponentCamera.cpp" />
+    <ClCompile Include="src\component\ComponentPhysics.cpp" />
+    <ClCompile Include="src\component\ComponentTransform.cpp" />
     <ClCompile Include="src\DarknecEngine.cpp" />
     <ClCompile Include="src\Darknec_Callbacks.cpp" />
-    <ClCompile Include="src\GLMBullet.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
-    <ClCompile Include="src\object\ComponentCamera.cpp" />
-    <ClCompile Include="src\object\ComponentPhysics.cpp" />
-    <ClCompile Include="src\object\ComponentTransform.cpp" />
     <ClCompile Include="src\object\fast_tiny_obj_loader.cc" />
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Mesh.cpp" />
     <ClCompile Include="src\object\Model.cpp" />
     <ClCompile Include="src\object\Object.cpp" />
     <ClCompile Include="src\object\ObjectCamera.cpp" />
+    <ClCompile Include="src\object\ObjectFileParser.cpp" />
     <ClCompile Include="src\object\ObjectMesh.cpp" />
     <ClCompile Include="src\object\ObjLoader.cpp" />
     <ClCompile Include="src\object\tiny_obj_loader.cc" />

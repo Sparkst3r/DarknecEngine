@@ -66,20 +66,6 @@ void LoggingManager::operator()(LogLevel level, const char* format, ...) {
 
 /**
 * Log formatted text to console and file
-* Log level set to LOG_DEBUG
-* @param owner tag log text with an owner.
-* @param format formatting pattern using type specifiers. @see std::printf
-* @param variadic data
-*/
-void LoggingManager::operator()(const char* owner, const char* format, ...) {
-	va_list varArgs;
-	va_start(varArgs, format);
-	this->WINDOWSlog(owner, LogLevel::LOG_DEBUG, format, varArgs);
-	va_end(varArgs);
-}
-
-/**
-* Log formatted text to console and file
 * @param owner tag log text with an owner.
 * @param level logging level
 * @param format formatting pattern using type specifiers. @see std::printf

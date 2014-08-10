@@ -7,7 +7,6 @@
 #ifndef DARKNEC_DARKNECENGINE_H 
 #define DARKNEC_DARKNECENGINE_H
 
-
 ///Standard libraries
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +28,7 @@
 #include <Darknec_Callbacks.h>
 #include <LoggingManager.h>
 #include <State.h>
+#include <component/ComponentRegistry.h>
 
 /** 
 * @namespace Darknec
@@ -51,7 +51,7 @@ namespace Darknec {
 	* @param argc argument count
 	* @param argv argument values
 	*/
-	void DarknecInit(Darknec::Callback::Settings* settings, int argc, char* argv[]);
+	void DarknecInit(int argc, char* argv[]);
 
 	/**
 	* DarknecInit

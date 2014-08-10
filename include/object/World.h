@@ -6,8 +6,8 @@
 #include <object/GameObject.h>
 #include <object/Object.h>
 #include <object/ObjectCamera.h>
-#include <object/ComponentTransform.h>
-#include <object/ComponentPhysics.h>
+#include <component/ComponentTransform.h>
+#include <component/ComponentPhysics.h>
 #include <physics/IKinematicPhysicsObject.h>
 #include <object/ObjectMesh.h>
 #include <hash_map>
@@ -27,7 +27,7 @@ public:
 
 	void setGravity(btVector3 &gravityVector);
 
-	void stepPhysicsWorld(btScalar timeStep, btScalar fixedTimeStep);
+	void stepPhysicsWorld(btScalar timeStep, int maxSubSteps);
 
 
 private:
