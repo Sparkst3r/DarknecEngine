@@ -30,6 +30,7 @@ class ComponentFactory;
 */
 class ComponentFactory {
 public:
+
 	/**
 	* createComponent
 	* @brief Constructs a component
@@ -51,6 +52,13 @@ public:
 */
 class ComponentRegistry {
 public:
+
+	/**
+	* Default constructor. Registers default components.
+
+	*/
+	ComponentRegistry();
+
 	/**
 	* registerComponent
 	*

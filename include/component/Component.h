@@ -4,6 +4,7 @@
 #include <State.h>
 #include <object/GameObject.h>
 #include <rapidXML/rapidxml.hpp>
+#include <component/ComponentRWUtils.h>
 
 class Component {
 public:
@@ -14,9 +15,11 @@ public:
 	virtual void read(rapidxml::xml_node<>* node) = 0;
 
 	virtual rapidxml::xml_node<>* write(rapidxml::xml_node<>*) = 0;
-
+	const char* name;
 protected:
 	GameObject* container_;
+
+	
 
 };
 

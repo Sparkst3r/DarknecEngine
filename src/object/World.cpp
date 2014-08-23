@@ -1,5 +1,6 @@
 #include <object/World.h>
 
+#include <component/ComponentMesh.h>
 
 World::World() {
 	broadphase = new btDbvtBroadphase();
@@ -29,21 +30,29 @@ void World::spawnObject(Object* object, glm::vec3 coordinates) {
 }
 
 void World::spawnObject(GameObject* object, glm::vec3 coordinates, const char* positionID, const char* physicsID) {
-	Component* compTrans = object->getComponent(positionID);
-	ComponentTransform* trans = dynamic_cast<ComponentTransform*>(compTrans);
+	ComponentTransform* trans = object->getCastComponent<ComponentTransform>(positionID);
 	if (trans != NULL) {
-		trans->setPosition(coordinates);
+		//trans->setPosition(coordinates);
 	}
 
-	Component* compPhys = object->getComponent(physicsID);
-	ComponentPhysics* phys = dynamic_cast<ComponentPhysics*>(compPhys);
+	ComponentPhysics* phys = object->getCastComponent<ComponentPhysics>(physicsID);
 	if (phys != NULL) {
 		physicsWorld->addRigidBody(phys->fallRigidBody_);
 	}
+
 	gameObjects.push_back(object);
 }
 
 void World::renderAllObjects() {
+
+	for (GameObject* object : gameObjects) {
+		ComponentMesh* mesh = object->getCastComponent<ComponentMesh>("mesh");
+		if (mesh != NULL) {
+			mesh->renderObject();
+		}
+	}
+	
+
 
 	for (Object* object : objects) {
 		ObjectMesh* cast = dynamic_cast<ObjectMesh*>(object);
@@ -57,12 +66,12 @@ void World::stepPhysicsWorld(btScalar timeStep, int maxSubSteps) {
 	this->physicsWorld->stepSimulation(timeStep, maxSubSteps);
 
 	for (GameObject* object : gameObjects) {
-		Component* compPhys = object->getComponent("physics"); //TODO dont hard code id. Fix when data driven files are added
-		ComponentPhysics* phys = dynamic_cast<ComponentPhysics*>(compPhys);
+		ComponentPhysics* phys = object->getCastComponent<ComponentPhysics>("physics");
 		if (phys != NULL) {
 			phys->update();
 		}
 	}
+	
 
 	for (Object* object : objects) {
 		object->updatePosition();

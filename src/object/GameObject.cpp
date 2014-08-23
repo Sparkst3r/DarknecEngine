@@ -11,35 +11,32 @@ GameObject* GameObject::createObject(const char* file) {
 
 
 GameObject::~GameObject() {
-	for (std::pair<const char*, Component*> comp : components) {
+	for (std::pair<std::string, Component*> comp : components) {
 		delete comp.second;
 	}
 }
 
-Component* GameObject::getComponent(const char* ID) {
-	std::hash_map<const char*, Component*>::iterator pair = components.find(ID);
-	
-	if (pair != components.end()) {
-		return pair->second;
+Component* GameObject::getComponent(std::string ID) {
+	if (components[ID] != NULL) {
+		return components[ID];
 	}
 	else {
-		Darknec::logger("GameObject", LogLevel::LOG_WARN, "No component with ID: %s", ID);
+		Darknec::logger("GameObject", LogLevel::LOG_ERROR, "No component with ID: %s", ID.c_str());
 		return NULL;
 	}
 }
 
 
 
-const char* GameObject::registerComponent(Component* component, const char* ID) {
-
+std::string GameObject::registerComponent(Component* component, std::string ID) {
 	components[ID] = component;
 	return ID;
 }
 
-void GameObject::setName(const char* name) {
+void GameObject::setName(std::string name) {
 	this->name = name;
 }
-const char* GameObject::getName() const {
+std::string GameObject::getName() const {
 	return this->name;
 }
 

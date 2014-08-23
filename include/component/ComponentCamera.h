@@ -8,10 +8,17 @@
 
 class ComponentCamera : public Component {
 public:
+
+	enum ProjType {
+		PERSPECTIVE,
+		ORTHOGRAPHIC,
+	};
+
+	DECL_COMPONENT_FACTORY(ComponentCamera)
 	ComponentCamera(GameObject* container);
 
 	virtual void update() {}
-	virtual void read(rapidxml::xml_node<>* node) {}
+	virtual void read(rapidxml::xml_node<>* node);
 
 	virtual rapidxml::xml_node<>* write(rapidxml::xml_node<>*) {
 		return NULL;
@@ -20,14 +27,14 @@ public:
 	glm::mat4 generateViewMatrix();
 	glm::mat4 generateProjMatrix();
 
-	void setPositionID(int positionID);
+	void setPositionID(const char* positionID);
 
 	float getDistance() const;
 	void setDistance(float distance);
 	void offsetDistance(float offsetDistance);
 
 	bool getProjType() const;
-	void setProjType(bool type);
+	void setProjType(ComponentCamera::ProjType projType);
 	
 	float getFOV() const;
 	void setFOV(float FOV);
@@ -40,7 +47,7 @@ private:
 
 	const char* positionID_;
 
-	bool projectionType_; //FALSE = Perspective; TRUE = Orthographic
+	ComponentCamera::ProjType projectionType_;
 	float FOV_;
 
 	int width_;

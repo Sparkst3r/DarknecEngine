@@ -7,10 +7,15 @@
 
 class ComponentPhysics : public Component {
 public:
+	DECL_COMPONENT_FACTORY(ComponentPhysics)
 
-	ComponentPhysics(GameObject* container, const char* positionID);
+	ComponentPhysics(GameObject* container);
 
-	const char* positionID_;
+	void setPositionID(std::string posID) {
+		this->positionID_ = posID;
+	}
+
+	std::string positionID_;
 
 	CollisionShape* collisionShape_;
 	DMotionState* state_;

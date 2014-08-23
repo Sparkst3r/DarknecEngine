@@ -1,15 +1,19 @@
 #include <component/ComponentPhysics.h>
 
-ComponentPhysics::ComponentPhysics(GameObject* container, const char* positionID) : positionID_(positionID) {
+ComponentPhysics::ComponentPhysics(GameObject* container) {
 	container_ = container;
 }
 
 void ComponentPhysics::read(rapidxml::xml_node<>* node) {
-	for (rapidxml::xml_node<>* dataIter = node->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
-		if (std::string(dataIter->name()) == std::string("position")) {
-		
-		}
-	}
+	this->collisionShape_ = new btSphereShape(1);
+	btVector3 fallInertia(0, 0, 0);
+	this->collisionShape_->calculateLocalInertia(1, fallInertia);
+	this->state_ = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(1, 3, 2)));
+	btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(1, this->state_, this->collisionShape_, fallInertia);
+	this->fallRigidBody_ = new btRigidBody(fallRigidBodyCI);
+	this->fallRigidBody_->setLinearVelocity(btVector3(1.1, 2.0, 0.0));
+
+	this->positionID_ = std::string("transform");
 }
 
 void ComponentPhysics::update() {

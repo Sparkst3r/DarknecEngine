@@ -107,6 +107,7 @@
     <ClInclude Include="include\component\ComponentCamera.h" />
     <ClInclude Include="include\component\ComponentMesh.h" />
     <ClInclude Include="include\component\ComponentPhysics.h" />
+    <ClInclude Include="include\component\ComponentRWUtils.h" />
     <ClInclude Include="include\component\ComponentTransform.h" />
     <ClInclude Include="include\DarknecEngine.h" />
     <ClInclude Include="include\Darknec_Callbacks.h" />
@@ -130,15 +131,20 @@
     <ClInclude Include="include\render\gui\Gui.h" />
     <ClInclude Include="include\render\Material.h" />
     <ClInclude Include="include\render\shader\Shader.h" />
+    <ClInclude Include="include\StandardLibs.h" />
     <ClInclude Include="include\State.h" />
+    <ClInclude Include="include\system\GameObjectSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\component\ComponentMesh.cpp" />
     <ClCompile Include="src\component\ComponentRegistry.cpp" />
     <ClCompile Include="src\component\ComponentCamera.cpp" />
     <ClCompile Include="src\component\ComponentPhysics.cpp" />
+    <ClCompile Include="src\component\ComponentRWUtils.cpp" />
     <ClCompile Include="src\component\ComponentTransform.cpp" />
     <ClCompile Include="src\DarknecEngine.cpp" />
     <ClCompile Include="src\Darknec_Callbacks.cpp" />
+    <ClCompile Include="src\GameObjectSystem.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
     <ClCompile Include="src\object\fast_tiny_obj_loader.cc" />
     <ClCompile Include="src\object\GameObject.cpp" />

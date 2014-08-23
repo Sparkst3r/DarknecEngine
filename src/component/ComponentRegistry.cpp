@@ -1,5 +1,19 @@
 #include <component/ComponentRegistry.h>
 
+#include <component/ComponentTransform.h>
+#include <component/ComponentPhysics.h>
+#include <component/ComponentCamera.h>
+#include <component/ComponentMesh.h>
+
+
+ComponentRegistry::ComponentRegistry() {
+	this->registerComponent(std::string("ComponentTransform"), new ComponentTransform::ComponentFactoryDefault());
+	this->registerComponent(std::string("ComponentPhysics"), new ComponentPhysics::ComponentFactoryDefault());
+	this->registerComponent(std::string("ComponentCamera"), new ComponentCamera::ComponentFactoryDefault());
+	this->registerComponent(std::string("ComponentMesh"), new ComponentMesh::ComponentFactoryDefault());
+}
+
+
 /**
 * registerComponent
 *

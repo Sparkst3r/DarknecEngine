@@ -29,6 +29,12 @@ namespace Darknec {
 	*/
 	namespace detail {
 
+		/**
+		* loadSettings
+		* Load vital settings from Settings.xml.
+		*
+		* @return settings struct containing all the settings loaded.
+		*/
 		Darknec::Callback::Settings* loadSettings() {
 			using namespace rapidxml;
 
@@ -114,30 +120,6 @@ namespace Darknec {
 						}
 					}
 				}
-					/*else if (std::string(gameObjectIter->name()) == std::string("components")) {
-						for (xml_node<>* componentIter = gameObjectIter->first_node(); componentIter; componentIter = componentIter->next_sibling()) {
-							if (std::string(componentIter->name()) == std::string("component")) {
-
-								xml_attribute<char>* attrType = componentIter->first_attribute();
-								xml_attribute<char>* attrName = attrType->next_attribute();
-
-								if (std::string(attrType->name()) == std::string("type") && std::string(attrName->name()) == std::string("name")) {
-									std::string s = std::string(attrType->value());
-									Component* component = Darknec::componentFactory->createComponent(s, object);
-									if (component != NULL) {
-										std::string compName = std::string(attrName->value());
-
-										component->read(componentIter);
-										object->registerComponent(component, compName.c_str());
-									}
-									else {
-										Darknec::logger(LogLevel::LOG_WARN, "Component of type '%s' requested by GameObject data file '%s' does not exist in component registry", s.c_str(), file);
-									}
-								}
-							}*/
-					//	}
-					//}
-				//}
 
 				settings->windowFlags = windowFlags;
 

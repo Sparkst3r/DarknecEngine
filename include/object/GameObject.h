@@ -1,10 +1,9 @@
 #ifndef DARKNEC_GAMEOBJECT_H
 #define DARKNEC_GAMEOBJECT_H
 
-#include <vector>
-#include <hash_map>
 #include <State.h>
 
+#include <hash_map>
 class Component;
 
 /**
@@ -39,7 +38,7 @@ public:
 	* @param ID component ID
 	* @return pointer to the component
 	*/
-	Component* getComponent(const char* ID);
+	Component* getComponent(std::string ID);
 
 	/**
 	* getCastComponent
@@ -51,22 +50,26 @@ public:
 	* @return pointer to the cast component
 	*/
 	template <typename T>
-	T* getCastComponent(const char* ID) {
+	T* getCastComponent(std::string ID) {
 		return dynamic_cast<T*>(getComponent(ID));
 	}
 	
 
-	const char* registerComponent(Component* component, const char* ID);
+	std::string registerComponent(Component* component, std::string ID);
 	
-	void setName(const char* name);
-	const char* getName() const;
+	void setName(std::string name);
+	std::string getName() const;
+
+	std::hash_map<std::string, Component*> getComponentMap() const {
+		return components;
+	}
 
 
 private:
 
-	const char* name;
+	std::string name;
 
-	std::hash_map<const char*, Component*> components;
+	std::hash_map<std::string, Component*> components;
 
 };
 
