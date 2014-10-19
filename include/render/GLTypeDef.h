@@ -1,10 +1,6 @@
 #ifndef DARKNEC_GLTYPEDEF_H
 #define DARKNEC_GLTYPEDEF_H
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <Core.h>
 
 
 /* Vertex Array Object type */

@@ -50,59 +50,11 @@
     <Filter Include="src\system">
       <UniqueIdentifier>{3c01759b-48b8-4475-8e1e-ad5b5c559d6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="extern\rapidXML">
+      <UniqueIdentifier>{3da9bf45-d2c8-4127-b39d-89d638669e6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="extern\rapidXML\rapidxml.hpp">
-      <Filter>extern</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\rapidXML\rapidxml_iterators.hpp">
-      <Filter>extern</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\rapidXML\rapidxml_print.hpp">
-      <Filter>extern</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\rapidXML\rapidxml_utils.hpp">
-      <Filter>extern</Filter>
-    </ClInclude>
-    <ClInclude Include="extern\rapidXML\rapidxml_helpers.h">
-      <Filter>extern</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\FontRenderer.h">
-      <Filter>include\render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\GLTypeDef.h">
-      <Filter>include\render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\shader\Shader.h">
-      <Filter>include\render\shader</Filter>
-    </ClInclude>
-    <ClInclude Include="include\physics\BulletTypeDef.h">
-      <Filter>include\physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\physics\IKinematicPhysicsObject.h">
-      <Filter>include\physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Darknec_Callbacks.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DarknecEngine.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\KeyHandler.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LoggingManager.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\State.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\Material.h">
-      <Filter>include\render\shader</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\gui\Gui.h">
-      <Filter>include\render\gui</Filter>
-    </ClInclude>
     <ClInclude Include="include\component\Component.h">
       <Filter>include\component</Filter>
     </ClInclude>
@@ -115,11 +67,11 @@
     <ClInclude Include="include\component\ComponentPhysics.h">
       <Filter>include\component</Filter>
     </ClInclude>
-    <ClInclude Include="include\component\ComponentTransform.h">
+    <ClInclude Include="include\component\ComponentRWUtils.h">
       <Filter>include\component</Filter>
     </ClInclude>
-    <ClInclude Include="include\object\fast_tiny_obj_loader.h">
-      <Filter>include\object</Filter>
+    <ClInclude Include="include\component\ComponentTransform.h">
+      <Filter>include\component</Filter>
     </ClInclude>
     <ClInclude Include="include\object\GameObject.h">
       <Filter>include\object</Filter>
@@ -130,46 +82,100 @@
     <ClInclude Include="include\object\Model.h">
       <Filter>include\object</Filter>
     </ClInclude>
-    <ClInclude Include="include\object\Object.h">
-      <Filter>include\object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\object\ObjectCamera.h">
-      <Filter>include\object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\object\ObjectMesh.h">
-      <Filter>include\object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\object\ObjLoader.h">
-      <Filter>include\object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\object\tiny_obj_loader.h">
-      <Filter>include\object</Filter>
-    </ClInclude>
     <ClInclude Include="include\object\World.h">
       <Filter>include\object</Filter>
     </ClInclude>
-    <ClInclude Include="include\object\ObjectFileParser.h">
-      <Filter>include\object</Filter>
+    <ClInclude Include="include\physics\BulletTypeDef.h">
+      <Filter>include\physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\component\ComponentRegistry.h">
-      <Filter>include\component</Filter>
+    <ClInclude Include="include\render\FontRenderer.h">
+      <Filter>include\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\GLTypeDef.h">
+      <Filter>include\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\Material.h">
+      <Filter>include\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\ComponentSystem.h">
+      <Filter>include\system</Filter>
     </ClInclude>
     <ClInclude Include="include\system\GameObjectSystem.h">
       <Filter>include\system</Filter>
     </ClInclude>
-    <ClInclude Include="include\StandardLibs.h">
+    <ClInclude Include="include\Core.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\component\ComponentRWUtils.h">
-      <Filter>include\component</Filter>
+    <ClInclude Include="include\Darknec_Callbacks.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DarknecEngine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoggingManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\State.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\rapidXML\rapidxml.hpp">
+      <Filter>extern\rapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\rapidXML\rapidxml_helpers.h">
+      <Filter>extern\rapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\rapidXML\rapidxml_iterators.hpp">
+      <Filter>extern\rapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\rapidXML\rapidxml_print.hpp">
+      <Filter>extern\rapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\rapidXML\rapidxml_utils.hpp">
+      <Filter>extern\rapidXML</Filter>
+    </ClInclude>
+    <ClInclude Include="include\object\CObjLoader.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\object\fast_tiny_obj_loader.h">
+      <Filter>include\object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\shader\Shader.h">
+      <Filter>include\render\shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\component\ComponentCamera.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentMesh.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentPhysics.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentRWUtils.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentTransform.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object\GameObject.cpp">
+      <Filter>src\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object\Mesh.cpp">
+      <Filter>src\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object\World.cpp">
+      <Filter>src\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\ComponentSystem.cpp">
+      <Filter>src\system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\GameObjectSystem.cpp">
+      <Filter>src\system</Filter>
+    </ClCompile>
     <ClCompile Include="src\render\FontRenderer.cpp">
       <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\shader\Shader.cpp">
-      <Filter>src\render\shader</Filter>
     </ClCompile>
     <ClCompile Include="src\Darknec_Callbacks.cpp">
       <Filter>src</Filter>
@@ -183,62 +189,17 @@
     <ClCompile Include="src\State.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\gui\Gui.cpp">
-      <Filter>src\render\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\ComponentCamera.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\ComponentPhysics.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\ComponentTransform.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\fast_tiny_obj_loader.cc">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\GameObject.cpp">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\Mesh.cpp">
+    <ClCompile Include="src\object\CObjLoader.cpp">
       <Filter>src\object</Filter>
     </ClCompile>
     <ClCompile Include="src\object\Model.cpp">
       <Filter>src\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\object\Object.cpp">
+    <ClCompile Include="src\object\fast_tiny_obj_loader.cc">
       <Filter>src\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\object\ObjectCamera.cpp">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\ObjectMesh.cpp">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\ObjLoader.cpp">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\tiny_obj_loader.cc">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\World.cpp">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\object\ObjectFileParser.cpp">
-      <Filter>src\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\ComponentRegistry.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\ComponentMesh.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObjectSystem.cpp">
-      <Filter>src\system</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\ComponentRWUtils.cpp">
-      <Filter>src\component</Filter>
+    <ClCompile Include="src\render\shader\Shader.cpp">
+      <Filter>src\render\shader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

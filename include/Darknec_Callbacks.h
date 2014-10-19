@@ -1,10 +1,7 @@
 #ifndef DARKNEC_DARKNEC_CALLBACKS_H
 #define DARKNEC_DARKNEC_CALLBACKS_H
 
-#include <vector>
-#include <SDL.h>
-
-
+#include <Core.h>
 
 namespace Darknec {
 

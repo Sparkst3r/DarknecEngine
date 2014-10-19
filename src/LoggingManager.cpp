@@ -13,14 +13,14 @@
 * Logging to console manager
 * Does not write to file
 */
-LoggingManager::LoggingManager() : LoggingManager("") {}
+Darknec::LoggingManager::LoggingManager() : LoggingManager("") {}
 
 /**
 * Logging to console and file manager
 * Writes to specified file
 * @param file file to write to. Appends to this file everytime the game is run.
 */
-LoggingManager::LoggingManager(const char* file) : file_(file) {
+Darknec::LoggingManager::LoggingManager(const char* file) : file_(file) {
 	logColours_.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	logColours_.push_back(FOREGROUND_GREEN | FOREGROUND_BLUE);
 	logColours_.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
@@ -34,7 +34,7 @@ LoggingManager::LoggingManager(const char* file) : file_(file) {
 * Change file that the logger appends to
 * @param file file to change to.
 */
-void LoggingManager::setFile(const char* file) {
+void Darknec::LoggingManager::setFile(const char* file) {
 	this->file_ = file;
 }
 
@@ -44,7 +44,7 @@ void LoggingManager::setFile(const char* file) {
 * @param format formatting pattern using type specifiers. @see std::printf
 * @param variadic data
 */
-void LoggingManager::operator()(const char* format, ...) {
+void Darknec::LoggingManager::operator()(const char* format, ...) {
 	va_list varArgs;
 	va_start(varArgs, format);
 	this->WINDOWSlog("", LogLevel::LOG_DEBUG, format, varArgs);
@@ -57,7 +57,7 @@ void LoggingManager::operator()(const char* format, ...) {
 * @param format formatting pattern using type specifiers. @see std::printf
 * @param variadic data
 */
-void LoggingManager::operator()(LogLevel level, const char* format, ...) {
+void Darknec::LoggingManager::operator()(LogLevel level, const char* format, ...) {
 	va_list varArgs;
 	va_start(varArgs, format);
 	this->WINDOWSlog("", level, format, varArgs);
@@ -71,7 +71,7 @@ void LoggingManager::operator()(LogLevel level, const char* format, ...) {
 * @param format formatting pattern using type specifiers. @see std::printf
 * @param variadic data
 */
-void LoggingManager::operator()(const char* owner, LogLevel level, const char* format, ...) {
+void Darknec::LoggingManager::operator()(const char* owner, LogLevel level, const char* format, ...) {
 	va_list varArgs;
 	va_start(varArgs, format);
 	this->WINDOWSlog(owner, level, format, varArgs);
@@ -86,7 +86,7 @@ void LoggingManager::operator()(const char* owner, LogLevel level, const char* f
 * @param buffer buffer containing pre formatted log text
 * @return the formatted string
 */
-std::string LoggingManager::formatString(const char* owner, LogLevel level, char* buffer) {
+std::string Darknec::LoggingManager::formatString(const char* owner, LogLevel level, char* buffer) {
 	//Get time
 	tm timeStruct;
 	time_t timet = time(0);
@@ -135,7 +135,7 @@ std::string LoggingManager::formatString(const char* owner, LogLevel level, char
 * @param format formatting pattern using type specifiers. @see std::printf
 * @param varargs data
 */
-void LoggingManager::WINDOWSlog(const char* owner, LogLevel level, const char* format, va_list varargs) {
+void Darknec::LoggingManager::WINDOWSlog(const char* owner, LogLevel level, const char* format, va_list varargs) {
 #if defined(_WIN32)
 	HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE); //Console Handle
 	CONSOLE_SCREEN_BUFFER_INFO prevStateInfo;

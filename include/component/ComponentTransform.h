@@ -1,15 +1,15 @@
 #ifndef DARKNEC_COMPONENTTRANSFORM_H
 #define DARKNEC_COMPONENTTRANSFORM_H
 
+#include <State.h>
 #include <component/Component.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <component/ComponentRWUtils.h>
 
 class ComponentTransform : public Component {
 public:
 
 	DECL_COMPONENT_FACTORY(ComponentTransform)
+	DECL_COMPONENTREQUIREMENT_FACTORY(ComponentTransform)
 
 	ComponentTransform(GameObject* container);
 

@@ -59,9 +59,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include\;extern\;..\SDL\include\;..\GLEW\include\;..\GLM\include\;..\SDL2_image\src;..\SDL2_TTF\include;..\Soil\;..\Bullet\src;..\Freetype\include;..\AssImp\include;$(IncludePath)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include\;..\boost\include\;extern\;..\SDL\include\;..\GLEW\include\;..\GLM\include\;..\SDL2_image\src;..\SDL2_TTF\include;..\Soil\;..\Bullet\src;..\Freetype\include;..\Gperf\src;..\AssImp\include;$(IncludePath)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -70,8 +71,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;SDL2.lib;SDL2main.lib;glew32.lib;soil.lib;assimpd.lib;zlibstaticd.lib;lua.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\SDL\lib\x86;..\GLEW\lib;..\Lua\lib;..\SOIL\;..\AssImp\build\contrib\zlib\Debug;..\AssImp\build\code\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;SDL2.lib;SDL2main.lib;glew32.lib;soil.lib;assimp.lib;lua.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\SDL\lib\x86;..\GLEW\lib;..\Lua\lib;..\SOIL\;..\AssImp\lib;..\boost\lib\</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -103,64 +104,50 @@
     <ClInclude Include="extern\rapidXML\rapidxml_print.hpp" />
     <ClInclude Include="extern\rapidXML\rapidxml_utils.hpp" />
     <ClInclude Include="include\component\Component.h" />
-    <ClInclude Include="include\component\ComponentRegistry.h" />
     <ClInclude Include="include\component\ComponentCamera.h" />
     <ClInclude Include="include\component\ComponentMesh.h" />
     <ClInclude Include="include\component\ComponentPhysics.h" />
     <ClInclude Include="include\component\ComponentRWUtils.h" />
     <ClInclude Include="include\component\ComponentTransform.h" />
+    <ClInclude Include="include\Core.h" />
     <ClInclude Include="include\DarknecEngine.h" />
     <ClInclude Include="include\Darknec_Callbacks.h" />
-    <ClInclude Include="include\KeyHandler.h" />
     <ClInclude Include="include\LoggingManager.h" />
     <ClInclude Include="include\object\fast_tiny_obj_loader.h" />
     <ClInclude Include="include\object\GameObject.h" />
     <ClInclude Include="include\object\Mesh.h" />
     <ClInclude Include="include\object\Model.h" />
-    <ClInclude Include="include\object\Object.h" />
-    <ClInclude Include="include\object\ObjectCamera.h" />
-    <ClInclude Include="include\object\ObjectFileParser.h" />
-    <ClInclude Include="include\object\ObjectMesh.h" />
-    <ClInclude Include="include\object\ObjLoader.h" />
-    <ClInclude Include="include\object\tiny_obj_loader.h" />
+    <ClInclude Include="include\object\CObjLoader.h" />
     <ClInclude Include="include\object\World.h" />
     <ClInclude Include="include\physics\BulletTypeDef.h" />
-    <ClInclude Include="include\physics\IKinematicPhysicsObject.h" />
     <ClInclude Include="include\render\FontRenderer.h" />
     <ClInclude Include="include\render\GLTypeDef.h" />
-    <ClInclude Include="include\render\gui\Gui.h" />
     <ClInclude Include="include\render\Material.h" />
     <ClInclude Include="include\render\shader\Shader.h" />
-    <ClInclude Include="include\StandardLibs.h" />
     <ClInclude Include="include\State.h" />
+    <ClInclude Include="include\system\ComponentSystem.h" />
     <ClInclude Include="include\system\GameObjectSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\component\ComponentMesh.cpp" />
-    <ClCompile Include="src\component\ComponentRegistry.cpp" />
     <ClCompile Include="src\component\ComponentCamera.cpp" />
+    <ClCompile Include="src\component\ComponentMesh.cpp" />
     <ClCompile Include="src\component\ComponentPhysics.cpp" />
     <ClCompile Include="src\component\ComponentRWUtils.cpp" />
     <ClCompile Include="src\component\ComponentTransform.cpp" />
     <ClCompile Include="src\DarknecEngine.cpp" />
     <ClCompile Include="src\Darknec_Callbacks.cpp" />
-    <ClCompile Include="src\GameObjectSystem.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
     <ClCompile Include="src\object\fast_tiny_obj_loader.cc" />
     <ClCompile Include="src\object\GameObject.cpp" />
     <ClCompile Include="src\object\Mesh.cpp" />
+    <ClCompile Include="src\object\CObjLoader.cpp" />
     <ClCompile Include="src\object\Model.cpp" />
-    <ClCompile Include="src\object\Object.cpp" />
-    <ClCompile Include="src\object\ObjectCamera.cpp" />
-    <ClCompile Include="src\object\ObjectFileParser.cpp" />
-    <ClCompile Include="src\object\ObjectMesh.cpp" />
-    <ClCompile Include="src\object\ObjLoader.cpp" />
-    <ClCompile Include="src\object\tiny_obj_loader.cc" />
     <ClCompile Include="src\object\World.cpp" />
     <ClCompile Include="src\render\FontRenderer.cpp" />
-    <ClCompile Include="src\render\gui\Gui.cpp" />
     <ClCompile Include="src\render\shader\Shader.cpp" />
     <ClCompile Include="src\State.cpp" />
+    <ClCompile Include="src\system\ComponentSystem.cpp" />
+    <ClCompile Include="src\system\GameObjectSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

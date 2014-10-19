@@ -1,7 +1,19 @@
 #include <component/ComponentRWUtils.h>
-
+#include <DarknecEngine.h>
 namespace Darknec {
 	namespace ComponentRWUtils {
+
+
+
+		std::string readString(rapidxml::xml_node<>* rootNode, const char* name) {
+			for (rapidxml::xml_node<>* dataIter = rootNode->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
+				if (std::string(dataIter->name()) == std::string(name)) {
+					return std::string(dataIter->value());
+				}
+			}
+			Darknec::logger(LogLevel::LOG_WARN, "Could not read 'string' : %s", name);
+			return NULL;
+		}
 
 		float readFloat(rapidxml::xml_node<>* rootNode, const char* name) {
 			for (rapidxml::xml_node<>* dataIter = rootNode->first_node(); dataIter; dataIter = dataIter->next_sibling()) {

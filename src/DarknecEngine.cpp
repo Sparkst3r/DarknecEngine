@@ -4,11 +4,7 @@
 */
 
 #include <DarknecEngine.h>
-
-#include <component/ComponentTransform.h>
-#include <rapidxml/rapidxml.hpp>
-#include <hash_map>
-
+#include <State.h>
 
 /**
 * @namespace Darknec
@@ -27,8 +23,8 @@ namespace Darknec {
 	* @author Sparkst3r
 	* @date 15 July 2014
 	*/
-	namespace detail {
-
+	namespace Detail {
+		
 		/**
 		* loadSettings
 		* Load vital settings from Settings.xml.
@@ -327,7 +323,7 @@ namespace Darknec {
 		Darknec::logger("DarknecEngine", LogLevel::LOG_SECTION, "============-START-=============");
 		Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "Darknec starting up");
 
-		int success = Darknec::detail::InitEngine();
+		int success = Darknec::Detail::InitEngine();
 		if (success != 0) {
 			Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "FATAL ERROR. Darknec could not initialise. Exit code: %i", success);
 			DarknecShutdown(success);
@@ -339,7 +335,7 @@ namespace Darknec {
 		Darknec::logger("DarknecEngine", LogLevel::LOG_SECTION, "==========-START GAME-==========");
 		if (Darknec::Callback::getInitCallback() != NULL) {
 			Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "Running userdef init");
-			Darknec::Callback::getInitCallback()(argc, argv, window, glContext);
+			Darknec::Callback::getInitCallback()(argc, argv, Darknec::Detail::window, Darknec::Detail::glContext);
 		}
 		else {
 			Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Illegal State: NULL init method is not supported. Define an init method");
@@ -348,7 +344,7 @@ namespace Darknec {
 
 
 
-		Darknec::detail::GameLoopBegin();
+		Darknec::Detail::GameLoopBegin();
 	}
 
 	/**
@@ -361,9 +357,6 @@ namespace Darknec {
 	* @return always 0. Satisfies main()'s return value. Ensures or at least puts off tampering of state in main().
 	*/
 	int DarknecShutdown(int close) {
-		if (Darknec::componentFactory != NULL) {
-			delete Darknec::componentFactory;
-		}
 
 
 		//Got past engine initialisation
@@ -373,21 +366,21 @@ namespace Darknec {
 			}
 		}
 
-		if (glContext != NULL) {
-			SDL_GL_DeleteContext(glContext);
+		if (Darknec::Detail::glContext != NULL) {
+			SDL_GL_DeleteContext(Darknec::Detail::glContext);
 		}
 
-		if (window != NULL) {
-			SDL_DestroyWindow(window);
+		if (Darknec::Detail::window != NULL) {
+			SDL_DestroyWindow(Darknec::Detail::window);
 		}
 
 		//SDL_IMG was initialised during setup and can be shutdown
-		if (SDLIMGOK) {
+		if (Darknec::Detail::SDLIMGOK) {
 			IMG_Quit();
 		}
 
 		//SDL was initialised during setup and can be shutdown
-		if (SDLOK) {
+		if (Darknec::Detail::SDLOK) {
 			SDL_Quit();
 		}
 

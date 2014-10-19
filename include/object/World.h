@@ -1,16 +1,11 @@
 #ifndef DARKNEC_WORLD_H
 #define DARKNEC_WORLD_H
 
-#include <vector>
+#include <State.h>
 #include <physics/BulletTypeDef.h>
 #include <object/GameObject.h>
-#include <object/Object.h>
-#include <object/ObjectCamera.h>
-#include <component/ComponentTransform.h>
 #include <component/ComponentPhysics.h>
-#include <physics/IKinematicPhysicsObject.h>
-#include <object/ObjectMesh.h>
-#include <hash_map>
+#include <component/ComponentMesh.h>
 
 class World {
 public:
@@ -18,9 +13,11 @@ public:
 	World();
 	~World();
 
-	void spawnObject(Object* object, glm::vec3 coordinates);
 
-	void spawnObject(GameObject* object, glm::vec3 coordinates, const char* positionID, const char* physicsID);
+	void spawnObject(GameObject* object, glm::vec3 coordinates);
+
+
+	void spawnObject(GameObject* object, glm::vec3 coordinates, std::string positionID, std::string physicsID);
 
 
 	void renderAllObjects();
@@ -35,9 +32,6 @@ private:
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	btCollisionDispatcher* dispatcher;
 	btSequentialImpulseConstraintSolver* solver;
-
-
-	std::vector<Object*> objects;
 
 	std::vector<GameObject*> gameObjects;
 

@@ -1,7 +1,8 @@
 #ifndef DARKNEC_MESH_H
 #define DARKNEC_MESH_H
-#include <render/GLTypeDef.h>
-#include <object/fast_tiny_obj_loader.h>
+
+#include <render/shader/Shader.h>
+#include <object/CObjLoader.h>
 
 class Mesh {
 public:
@@ -10,7 +11,7 @@ public:
 	Mesh(const char* filename);
 
 	void Render();
-	ObjLoader::Material material;
+//	ObjLoader::Material material;
 
 private:
 

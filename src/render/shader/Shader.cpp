@@ -1,5 +1,7 @@
 #include <render/shader/Shader.h>
 
+#include <State.h>
+#include <DarknecEngine.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -11,8 +13,6 @@
 * Default Constructor
 * GL shader state is NULL at this point.
 */
-Shader::Shader() {
-}
 
 
 Shader::~Shader() {
@@ -27,7 +27,7 @@ void Shader::reload() {
 	std::ifstream file(filename);
 
 	if (file) {
-		Darknec::logger("Shader", LogLevel::LOG_INFO, "Reloaded shader file: %s", filename);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_INFO, "Reloaded shader file: %s", filename);
 		std::stringstream buffer;
 		buffer << file.rdbuf();
 
@@ -39,8 +39,15 @@ void Shader::reload() {
 		file.close();
 	}
 	else {
-		Darknec::logger(LogLevel::LOG_ERROR, "Couldn't reload shader file: %s", filename);
+		Darknec::logger(Darknec::LogLevel::LOG_ERROR, "Couldn't reload shader file: %s", filename);
 	}
+}
+
+/**
+* Make shader active
+*/
+void Shader::use() {
+	glUseProgram(this->ID);
 }
 
 /**
@@ -51,12 +58,7 @@ void Shader::bindFragmentOutput(const char* location) {
 	glBindFragDataLocation(this->ID, 0, location);
 }
 
-/**
-* Make shader active
-*/
-void Shader::use() {
-	glUseProgram(this->ID);
-}
+
 
 /**
 * Shader
@@ -69,7 +71,7 @@ Shader::Shader(const char* filename) {
 	std::ifstream file(filename);
 
 	if (file) {
-		Darknec::logger("Shader", LogLevel::LOG_INFO, "Found shader file: %s", filename);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_INFO, "Found shader file: %s", filename);
 		std::stringstream buffer;
         buffer << file.rdbuf();
 
@@ -81,7 +83,7 @@ Shader::Shader(const char* filename) {
         file.close();
 	}
 	else {
-		Darknec::logger("Shader", LogLevel::LOG_ERROR, "Couldn't find shader file: %s", filename);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_ERROR, "Couldn't find shader file: %s", filename);
 	}
 
 }
@@ -121,9 +123,9 @@ GLuint Shader::createShader(std::vector<std::string> stages, bool reload) {
 	glGetProgramiv(tempID, GL_LINK_STATUS, &linkStatus);
 	glGetProgramiv(tempID, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-	LogLevel level = LogLevel::LOG_WARN;
+	Darknec::LogLevel level = Darknec::LogLevel::LOG_WARN;
 	if (linkStatus == GL_FALSE) {
-		level = LogLevel::LOG_ERROR;
+		level = Darknec::LogLevel::LOG_ERROR;
 	}
 
 	if (infoLogLength > 1) {
@@ -133,7 +135,7 @@ GLuint Shader::createShader(std::vector<std::string> stages, bool reload) {
 		delete strInfoLog;
 	}
 	else {
-		Darknec::logger(LogLevel::LOG_INFO, "Linked shader with stages: %s", shadersUsed.c_str());
+		Darknec::logger(Darknec::LogLevel::LOG_INFO, "Linked shader with stages: %s", shadersUsed.c_str());
 	}
 
 	for (GLuint shaderID : shaderIDs) {
@@ -273,7 +275,7 @@ AttrID Shader::getAttribute(const char* attrName) {
 
 	if (attributeID == -1 && shouldPrint) {
 		previousErrors.push_back((std::string("Could not bind attribute: ") + std::string(attrName)));
-		Darknec::logger("Shader", LogLevel::LOG_WARN, "Could not bind attribute: %s", attrName);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_WARN, "Could not bind attribute: %s", attrName);
 	}
 	return attributeID;
 }
@@ -298,7 +300,7 @@ UnifID Shader::getUniform(const char* uniformName) {
 
 	if (uniformID == -1 && shouldPrint) {
 		previousErrors.push_back((std::string("Could not bind uniform: ") + std::string(uniformName)));
-		Darknec::logger("Shader", LogLevel::LOG_WARN, "Could not bind uniform: %s", uniformName);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_WARN, "Could not bind uniform: %s", uniformName);
 	}
 	return uniformID;
 }

@@ -1,13 +1,10 @@
 #include <object/Mesh.h>
-#include <iostream>
-#include <vector>
-#include <glm/glm.hpp>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <SDL.h>
-#include <object/ObjLoader.h>
 #include <State.h>
+#include <assimp/Importer.hpp>   
+#include <assimp/Exporter.hpp>
+#include <assimp/scene.h>    
+#include <assimp/postprocess.h>
+#include <object/CObjLoader.h>
 
 Mesh::Mesh() {}
 
@@ -16,6 +13,8 @@ using namespace glm;
 #include <soil.h>
 
 //TODO Temp UV until loading is fixed properly
+
+
 
 static const GLfloat g_uv_buffer_data[] = {
 	0.000059f, 1.0f - 0.000004f,
@@ -29,34 +28,53 @@ static const GLfloat g_uv_buffer_data[] = {
 };
 
 Mesh::Mesh(const char* filename) {
+	Assimp::Importer importer;
+	Model model;
 
-	bool write = 0;
+	aiScene* scene = NULL;
+
+	if (std::ifstream(std::string(filename) + ".cobj").good()) {
+		Uint32 start = SDL_GetTicks();
+		model = Darknec::CObjLoader::read(std::ifstream(std::string(filename) + ".cobj", std::ios::binary));
+	}
+	else if (std::ifstream(std::string(filename)).good()) {
+		Uint32 start = SDL_GetTicks();
+
+		scene = const_cast <aiScene*>(importer.ReadFile(filename,
+			aiProcess_CalcTangentSpace |
+			aiProcess_Triangulate |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_SortByPType));
+
+		model = Model::ConvertAssimpToDarknec(scene);
+		Darknec::CObjLoader::write(std::ofstream(std::string(filename) + ".cobj", std::ios::binary), model);
 	
-	std::vector<ObjLoader::Shape> shapes;
-	if (write) {
-		ObjLoader::LoadObj(shapes, filename, "assets/");
-
-		CObjLoader::write(std::ofstream(std::string(filename) + "test.cobj", std::ios::binary), shapes);
+	
 	}
 	else {
-		shapes = CObjLoader::read(std::ifstream(std::string(filename) + "test.cobj", std::ios::binary));
-
+		Darknec::logger("Sad face :(");
 	}
 
 
-	std::vector<float> verticest = shapes[0].mesh.vertices;
-	std::vector<float> uvst = shapes[0].mesh.texcoords;
-	std::vector<float> normalst = shapes[0].mesh.normals;
-	std::vector<unsigned int> indiciest = shapes[0].mesh.indices;
+
+	Darknec::logger("%i", model.meshes_.size());
+
+	std::vector<float> verticest = model.meshes_[0].vertices_;
+	std::vector<float> normalst = model.meshes_[0].normals_;
+	std::vector<unsigned int> indiciest = model.meshes_[0].indices_;
+
+
+
+
 	
-	material = shapes[0].material;
+	//material = shapes[0].material;
 
 	/*ObjLoader::loadObj(filename, vertices, uvs, normals, indicies);*/
 
 	this->indiciescount = indiciest.size();
 
 
-	GLuint texture = SOIL_load_OGL_texture("assets/texture.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	GLuint texture = SOIL_load_OGL_texture("assets/texture2.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
@@ -79,11 +97,17 @@ Mesh::Mesh(const char* filename) {
 	
 	VBO uv;
 
-	std::vector<GLfloat> uvsy;
+	std::vector<float> uvsy;
 
-	for (GLfloat uv : g_uv_buffer_data) {
-		uvsy.push_back(uv);
+	if (model.meshes_[0].hasUVS_ && model.meshes_[0].UVs_.size() != 0) {
+		uvsy = model.meshes_[0].UVs_;
 	}
+	else {
+		for (GLfloat uv : g_uv_buffer_data) {
+			uvsy.push_back(uv);
+		}
+	}
+
 
 	
 	glEnableVertexAttribArray(2);

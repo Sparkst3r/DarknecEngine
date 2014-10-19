@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{77E1B206-2AD0-46F2-B9A8-9F6F50474900}</ProjectGuid>
+    <RootNamespace>Project1</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>lib\</OutDir>
+    <IntDir>build\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>lib\</OutDir>
+    <IntDir>build\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>include\;extern\;..\SDL\include\;..\GLEW\include\;..\GLM\include\;..\SDL2_image\src;..\SDL2_TTF\include;..\Soil\;..\Bullet\src;..\Freetype\include;..\AssImp\include;$(IncludePath)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>glew32.lib;sdl2.lib;sdl2main.lib;</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\glew\lib;..\sdl\lib\x86;</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>include\;extern\;..\SDL\include\;..\GLEW\include\;..\GLM\include\;..\SDL2_image\src;..\SDL2_TTF\include;..\Soil\;..\Bullet\src;..\Freetype\include;..\AssImp\include;$(IncludePath)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\component\ComponentCamera.cpp" />
+    <ClCompile Include="src\component\ComponentMesh.cpp" />
+    <ClCompile Include="src\component\ComponentPhysics.cpp" />
+    <ClCompile Include="src\component\ComponentRWUtils.cpp" />
+    <ClCompile Include="src\component\ComponentTransform.cpp" />
+    <ClCompile Include="src\DarknecEngine.cpp" />
+    <ClCompile Include="src\Darknec_Callbacks.cpp" />
+    <ClCompile Include="src\LoggingManager.cpp" />
+    <ClCompile Include="src\object\fast_tiny_obj_loader.cc" />
+    <ClCompile Include="src\object\GameObject.cpp" />
+    <ClCompile Include="src\object\Mesh.cpp" />
+    <ClCompile Include="src\object\ObjectFileParser.cpp" />
+    <ClCompile Include="src\object\World.cpp" />
+    <ClCompile Include="src\State.cpp" />
+    <ClCompile Include="src\system\ComponentSystem.cpp" />
+    <ClCompile Include="src\system\GameObjectSystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="extern\rapidXML\rapidxml.hpp" />
+    <ClInclude Include="extern\rapidXML\rapidxml_helpers.h" />
+    <ClInclude Include="extern\rapidXML\rapidxml_iterators.hpp" />
+    <ClInclude Include="extern\rapidXML\rapidxml_print.hpp" />
+    <ClInclude Include="extern\rapidXML\rapidxml_utils.hpp" />
+    <ClInclude Include="include\component\Component.h" />
+    <ClInclude Include="include\component\ComponentCamera.h" />
+    <ClInclude Include="include\component\ComponentMesh.h" />
+    <ClInclude Include="include\component\ComponentPhysics.h" />
+    <ClInclude Include="include\component\ComponentRWUtils.h" />
+    <ClInclude Include="include\component\ComponentTransform.h" />
+    <ClInclude Include="include\Core.h" />
+    <ClInclude Include="include\DarknecEngine.h" />
+    <ClInclude Include="include\Darknec_Callbacks.h" />
+    <ClInclude Include="include\LoggingManager.h" />
+    <ClInclude Include="include\object\fast_tiny_obj_loader.h" />
+    <ClInclude Include="include\object\GameObject.h" />
+    <ClInclude Include="include\object\Mesh.h" />
+    <ClInclude Include="include\object\Model.h" />
+    <ClInclude Include="include\object\ObjectFileParser.h" />
+    <ClInclude Include="include\object\ObjLoader.h" />
+    <ClInclude Include="include\object\tiny_obj_loader.h" />
+    <ClInclude Include="include\object\World.h" />
+    <ClInclude Include="include\physics\BulletTypeDef.h" />
+    <ClInclude Include="include\render\GLTypeDef.h" />
+    <ClInclude Include="include\render\shader\Shader.h" />
+    <ClInclude Include="include\State.h" />
+    <ClInclude Include="include\system\ComponentSystem.h" />
+    <ClInclude Include="include\system\GameObjectSystem.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

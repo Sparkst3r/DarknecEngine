@@ -3,7 +3,7 @@
 
 #include <State.h>
 
-#include <hash_map>
+
 class Component;
 
 /**
@@ -22,7 +22,7 @@ public:
 
 	GameObject();
 
-	static GameObject* createObject(const char* file);
+	static GameObject* readFile(const char* file);
 
 	/**
 	* Destructor
@@ -54,6 +54,7 @@ public:
 		return dynamic_cast<T*>(getComponent(ID));
 	}
 	
+	bool hasComponent(std::string);
 
 	std::string registerComponent(Component* component, std::string ID);
 	

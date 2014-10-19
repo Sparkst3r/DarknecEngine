@@ -1,67 +1,42 @@
 #ifndef DARKNEC_MODEL_H
 
-#include <vector>
-#include <render/GLTypeDef.h>
-#include <glm/glm.hpp>
+#include <Core.h>
+#include <assimp/scene.h>
 
-class Texture {
-
-private:
-	const char* filename;
-
-	const char* data;
-
-};
-
-class Material {
-
-	float ambient;
-	float diffuse;
-	float specular;
-
-	Texture diffuseTex;
-	Texture specularTex;
-	Texture normalTex;
-	Texture displacementTex;
-
-
-};
-
-class Mesh {
+class Messh {
 public:
-	struct Vertex {
-		GLuint vertex;
-		GLuint normal;
-		GLuint texcoord;
-	};
+	Messh();
+
+	std::vector<float>          vertices_;
+	std::vector<float>          normals_;
+	std::vector<float>          UVs_;
+	std::vector<unsigned int>   indices_;
 
 
-	std::vector<glm::vec4> vertices;
-	std::vector<glm::vec3> normals;
-	std::vector<glm::vec2> texcoords;
-	
+	int numVertices_;
+	int numNormals_;
+	int numUVs_;
+	int numIndices_;
+
+
+	bool hasNormals_;
+	bool hasUVS_;
+
 };
-
-
-class Armature {};
-
 
 class Model {
-	enum FileType {
-		OBJ,
-		COLLADA,
-	};
+public:
 
-	Model(const char* filename, FileType type);
+	Model();
 
+	std::vector<Messh> meshes_;
 
-private:
+	int numMeshes_;
 
-	void loadObj(FILE* file);
-
-	Mesh meshes;
-
-	Armature armature;
+	static Model ConvertAssimpToDarknec(aiScene* scene);
 
 };
+
+
+
 #endif // !DARKNEC_MODEL_H

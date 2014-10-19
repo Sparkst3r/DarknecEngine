@@ -1,10 +1,10 @@
 #ifndef DARKNEC_COMPONENTCAMERA_H
 #define DARKNEC_COMPONENTCAMERA_H
 
+#include <State.h>
 #include <component/Component.h>
-#include <object/GameObject.h>
-
-#include <glm/glm.hpp>
+#include <component/ComponentTransform.h>
+#include <component/ComponentRWUtils.h>
 
 class ComponentCamera : public Component {
 public:
@@ -15,6 +15,8 @@ public:
 	};
 
 	DECL_COMPONENT_FACTORY(ComponentCamera)
+	DECL_COMPONENTREQUIREMENT_FACTORY(ComponentCamera)
+
 	ComponentCamera(GameObject* container);
 
 	virtual void update() {}
@@ -26,8 +28,6 @@ public:
 
 	glm::mat4 generateViewMatrix();
 	glm::mat4 generateProjMatrix();
-
-	void setPositionID(const char* positionID);
 
 	float getDistance() const;
 	void setDistance(float distance);
@@ -45,7 +45,7 @@ public:
 
 private:
 
-	const char* positionID_;
+	ComponentRequirement<ComponentTransform> transform_;
 
 	ComponentCamera::ProjType projectionType_;
 	float FOV_;

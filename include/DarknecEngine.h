@@ -3,32 +3,8 @@
 * Engine core header
 */
 
-
 #ifndef DARKNEC_DARKNECENGINE_H 
 #define DARKNEC_DARKNECENGINE_H
-
-///Standard libraries
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <sstream>
-#include <fstream>
-
-///SDL libraries
-#include <SDL.h>
-#include <SDL_Image.h>
-
-///GL implementation
-#include <GL/glew.h>
-
-///Assorted includes
-//TODO order this
-#include <Darknec_Callbacks.h>
-#include <LoggingManager.h>
-#include <State.h>
-#include <component/ComponentRegistry.h>
 
 /** 
 * @namespace Darknec

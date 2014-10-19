@@ -1,9 +1,8 @@
 #ifndef DARKNEC_SHADER_H
 #define DARKNEC_SHADER_H
 
-#include <State.h>
-#include <vector>
-#include <string>
+#include <Core.h>
+
 #include <render/GLTypeDef.h>
 
 /**
@@ -14,7 +13,8 @@
 class Shader {
 public:
 
-	Shader();
+	Shader::Shader() {}
+
 
 	Shader(const char* filename);
 	~Shader();

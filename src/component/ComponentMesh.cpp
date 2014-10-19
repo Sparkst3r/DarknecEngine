@@ -8,17 +8,15 @@ rapidxml::xml_node<>* ComponentMesh::write(rapidxml::xml_node<>* node) {
 	return NULL;
 }
 void ComponentMesh::read(rapidxml::xml_node<>* node) {
-	Darknec::logger("Inside Mesh");
-	this->trans = std::string("transform");
-	this->model_ = new Mesh("assets/dragon2.obj");
+	this->trans = Darknec::ComponentRWUtils::readString(node, "ComponentRequirement");
+	this->model_ = new Mesh(Darknec::ComponentRWUtils::readString(node, "mesh").c_str());
 }
 void ComponentMesh::update() {
 
 }
 
 void ComponentMesh::renderObject() {
-	ComponentTransform* transform = container_->getCastComponent<ComponentTransform>(trans);
-	
+	ComponentTransform* transform = container_->getCastComponent<ComponentTransform>(std::string("transform"));
 
 
 	GLint id;
@@ -38,9 +36,9 @@ void ComponentMesh::renderObject() {
 	UnifID uniformID3 = glGetUniformLocation(id, "frontMaterial.specular");
 	UnifID uniformID4 = glGetUniformLocation(id, "frontMaterial.shininess");
 
-	glUniform4f(uniformID1, model_->material.ambient[0], model_->material.ambient[1], model_->material.ambient[2], 1.0f);
-	glUniform4f(uniformID2, model_->material.diffuse[0], model_->material.diffuse[1], model_->material.diffuse[2], 1.0f);
-	glUniform4f(uniformID3, model_->material.specular[0], model_->material.specular[1], model_->material.specular[2], 1.0f);
+	glUniform4f(uniformID1, 0.2f, 0.3f, 0.9f, 1.0f);
+	glUniform4f(uniformID2, 0.2f, 0.3f, 0.9f, 1.0f);
+	glUniform4f(uniformID3, 0.2f, 0.3f, 0.9f, 1.0f);
 	glUniform1f(uniformID4, 10.0f);
 
 	model_->Render();

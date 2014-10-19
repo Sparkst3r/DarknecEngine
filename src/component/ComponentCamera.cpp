@@ -1,42 +1,24 @@
 #include <component/ComponentCamera.h>
-#include <component/ComponentTransform.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 
 
 void ComponentCamera::read(rapidxml::xml_node<>* node) {
-	for (rapidxml::xml_node<>* dataIter = node->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
-		if (std::string(dataIter->name()) == std::string("ComponentRequirement")) {
-			this->positionID_ = std::string(dataIter->value()).c_str();
-		}
-		else if (std::string(dataIter->name()) == std::string("projectiontype")) {
-			std::string type = std::string(dataIter->value());
-			if (type == std::string("PERSPECTIVE")) {
-				this->projectionType_ = ProjType::PERSPECTIVE;
-			}
-			else if (type == std::string("ORTHOGRAPHIC")) {
-				this->projectionType_ = ProjType::ORTHOGRAPHIC;
-			}
-		}
-		else if (std::string(dataIter->name()) == std::string("FOV")) {
-			this->FOV_ = atof(std::string(dataIter->value()).c_str());
-		}
-		else if (std::string(dataIter->name()) == std::string("width")) {
-			this->width_ = atoi(std::string(dataIter->value()).c_str());
-		}
-		else if (std::string(dataIter->name()) == std::string("height")) {
-			this->height_ = atoi(std::string(dataIter->value()).c_str());
-		}
-		else if (std::string(dataIter->name()) == std::string("nearclip")) {
-			this->frustrumNearClip_ = atof(std::string(dataIter->value()).c_str());
-		}
-		else if (std::string(dataIter->name()) == std::string("farclip")) {
-			this->frustrumFarClip_ = atof(std::string(dataIter->value()).c_str());
-		}
-		else if (std::string(dataIter->name()) == std::string("distance")) {
-			this->distance_ = atof(std::string(dataIter->value()).c_str());
-		}
+	this->transform_ = ComponentRequirement<ComponentTransform>(this->container_, std::string("transform"));
+
+
+	std::string projectionType = Darknec::ComponentRWUtils::readString(node, "projectiontype");
+	if (projectionType == std::string("PERSPECTIVE")) {
+		this->projectionType_ = ProjType::PERSPECTIVE;
 	}
+	else if (projectionType == std::string("ORTHOGRAPHIC")) {
+		this->projectionType_ = ProjType::ORTHOGRAPHIC;
+	}
+
+	this->FOV_ =				Darknec::ComponentRWUtils::readFloat(node, "FOV");
+	this->width_ =				Darknec::ComponentRWUtils::readInt(node, "width");
+	this->height_ =				Darknec::ComponentRWUtils::readInt(node, "height");
+	this->frustrumNearClip_ =	Darknec::ComponentRWUtils::readFloat(node, "nearclip");
+	this->frustrumFarClip_ =	Darknec::ComponentRWUtils::readFloat(node, "farclip");
+	this->distance_ =			Darknec::ComponentRWUtils::readFloat(node, "distance");
 }
 
 ComponentCamera::ComponentCamera(GameObject* container) {
@@ -62,15 +44,12 @@ glm::mat4 ComponentCamera::generateProjMatrix() {
 glm::mat4 ComponentCamera::generateViewMatrix() {
 	glm::mat4 matrix(1.0f);
 
-	//WARN This can return NULL.
-	ComponentTransform* trans = dynamic_cast<ComponentTransform*>(container_->getComponent("transform"));
-	
-	//0. Distance
+	////0. Distance
 	glm::mat4 distance = glm::translate(matrix, glm::vec3(0.0f, 0.0f, -this->distance_));
-	//1. Rotate
-	glm::mat4 rotate = glm::mat4_cast(glm::angleAxis(0.f, glm::vec3(1.0f, 1.0f, 1.0f)) * trans->getOrientation());
-	//2. Translate
-	glm::mat4 translate = glm::translate(matrix, -trans->getPosition());
+	////1. Rotate
+	glm::mat4 rotate = glm::mat4_cast(glm::angleAxis(0.f, glm::vec3(1.0f, 1.0f, 1.0f)) * transform_->getOrientation());
+	////2. Translate
+	glm::mat4 translate = glm::translate(matrix, -transform_->getPosition());
 
 	return distance * rotate * translate;
 }

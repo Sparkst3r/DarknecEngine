@@ -1,14 +1,16 @@
 #ifndef DARKNEC_COMPONENTMESH_H 
 #define DARKNEC_COMPONENTMESH_H
 
+#include <State.h>
 #include <component/Component.h>
 #include <component/ComponentTransform.h>
+#include <component/ComponentRWUtils.h>
 #include <object/Mesh.h>
-#include <render/shader/Shader.h>
 
 class ComponentMesh : public Component {
 public:
 	DECL_COMPONENT_FACTORY(ComponentMesh)
+	DECL_COMPONENTREQUIREMENT_FACTORY(ComponentMesh)
 
 	ComponentMesh(GameObject* container);
 
