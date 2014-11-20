@@ -5,7 +5,6 @@
 
 #include <Darknec_Callbacks.h>
 #include <LoggingManager.h>
-
 /**
 * Darknec
 * @brief Base namespace
@@ -84,9 +83,13 @@ namespace Darknec {
 		CRASHED,
 	};
 
+	extern int RenderFPS;
 
 	extern LoggingManager logger;
 	extern RunState RUNSTATE;
+	extern HSQUIRRELVM squirrel;
+	extern Sqrat::Table darknec;
+	extern std::string baseAssetPath;
 }
 
 #endif

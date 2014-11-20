@@ -48,41 +48,61 @@ namespace Darknec {
 					stream.write((const char*) &hasUV, dataWidth);
 				}
 
+				//Write mesh material index
+				stream.write((const char*) &model.meshes_[mesh].materialIndex_, dataWidth);
 
-				/*aiMaterial* mat = meshes->mMaterials[meshes->mMeshes[mesh]->mMaterialIndex];
 
 
-				aiColor3D ambient;
-				float ambientF[3];
-				mat->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
-				ambientF[0] = ambient.r;
-				ambientF[1] = ambient.g;
-				ambientF[2] = ambient.b;
+				//stream.write((const char*) &ambientF[0], dataWidth * 3);
+				//stream.write((const char*) &diffuseF[0], dataWidth * 3);
+				//stream.write((const char*) &specularF[0], dataWidth * 3);*/
+			}
 
-				aiColor3D diffuse;
-				float diffuseF[3];
-				mat->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
-				diffuseF[0] = diffuse.r;
-				diffuseF[1] = diffuse.g;
-				diffuseF[2] = diffuse.b;
+			stream.write((const char*) &model.numMaterials_, dataWidth);
 
-				aiColor3D specular;
-				float specularF[3];
-				mat->Get(AI_MATKEY_COLOR_AMBIENT, specular);
-				specularF[0] = specular.r;
-				specularF[1] = specular.g;
-				specularF[2] = specular.b;
+			const int procedeFlag = -1;
+			const int colourFlag = -2;
 
-				stream.write((const char*) &ambientF[0], dataWidth * 3);
-				stream.write((const char*) &diffuseF[0], dataWidth * 3);
-				stream.write((const char*) &specularF[0], dataWidth * 3);*/
+			for (Material mat : model.materials_) {
+				//If there are material colours. There should never not be though.
+				if (!mat.colours_.empty()) {
+					stream.write((const char*) &colourFlag, dataWidth);
+
+					typedef std::hash_map<int, glm::vec3>::iterator ite;
+					for (ite iterator = mat.colours_.begin(); iterator != mat.colours_.end(); iterator++) {
+						int enumIndex = iterator->first;
+						glm::vec3 colour = iterator->second;
+
+						//Write index
+						stream.write((const char*) &enumIndex, dataWidth);
+						//Write colour floats
+						stream.write((const char*) &colour[0], dataWidth * 3);
+					}
+
+					//Write procede flag
+					stream.write((const char*) &procedeFlag, dataWidth);
+				}
+				else {
+					Darknec::logger(LogLevel::LOG_ERROR, "COBJ file does not contain Material colour data! This is really bad.");
+					//Write procede flag
+					stream.write((const char*) &procedeFlag, dataWidth);
+				}
+
+
+
 
 			}
+
+
+
+
 			stream.close();
 		}
 
 
-		Model read(std::ifstream& stream) {
+		Model read(std::string filename) {
+			std::ifstream stream = std::ifstream(filename, std::ios::binary);
+
 			Model model = Model();
 			const auto dataWidth = sizeof(float); //Size of float
 
@@ -136,6 +156,9 @@ namespace Darknec {
 					stream.read((char*) &messh.UVs_[0], uvCount * dataWidth);
 				}
 
+				//Read mesh material index
+				stream.read((char*) &messh.materialIndex_, dataWidth);
+
 				//stream.read((char*) &shapes[shapeIndex].material.ambient[0], 3 * dataWidth);
 				//stream.read((char*) &shapes[shapeIndex].material.diffuse[0], 3 * dataWidth);
 				//stream.read((char*) &shapes[shapeIndex].material.specular[0], 3 * dataWidth);
@@ -144,7 +167,30 @@ namespace Darknec {
 				model.meshes_.push_back(messh);
 			}
 
-			Darknec::logger("COBJLoader", Darknec::LogLevel::LOG_INFO, "Took %i milliseconds", SDL_GetTicks() - start);
+			stream.read((char*) &model.numMaterials_, dataWidth);
+
+			for (int matIndex = 0; matIndex < model.numMaterials_; matIndex++) {
+				Material mater;
+				int currentIndex = -1;
+				stream.read((char*) &currentIndex, dataWidth);
+
+				if (currentIndex == -2) {
+					while (currentIndex != -1) {
+						stream.read((char*) &currentIndex, dataWidth);
+						if (currentIndex != -1) {
+							int enumIndex = currentIndex;
+							glm::vec3 colour;
+							stream.read((char*) &colour[0], dataWidth * 3);
+							mater.colours_[enumIndex] = colour;
+						}
+					}
+				}
+			}
+
+
+
+
+			Darknec::logger("COBJLoader", Darknec::LogLevel::LOG_LOG, "Loading object: %s, Took %i milliseconds", filename.c_str(), SDL_GetTicks() - start);
 
 			stream.close();
 			return model;

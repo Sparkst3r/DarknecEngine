@@ -34,30 +34,29 @@ Mesh::Mesh(const char* filename) {
 	aiScene* scene = NULL;
 
 	if (std::ifstream(std::string(filename) + ".cobj").good()) {
-		Uint32 start = SDL_GetTicks();
-		model = Darknec::CObjLoader::read(std::ifstream(std::string(filename) + ".cobj", std::ios::binary));
+		Darknec::logger("Mesh", Darknec::LogLevel::LOG_LOG, "Found compiled object: %s", std::string(std::string(filename) + ".cobj").c_str());
+		model = Darknec::CObjLoader::read(std::string(filename) + ".cobj");
+		
 	}
 	else if (std::ifstream(std::string(filename)).good()) {
-		Uint32 start = SDL_GetTicks();
-
+		Darknec::logger("Mesh", Darknec::LogLevel::LOG_LOG, "Found object %s; loading", filename);
 		scene = const_cast <aiScene*>(importer.ReadFile(filename,
 			aiProcess_CalcTangentSpace |
 			aiProcess_Triangulate |
 			aiProcess_JoinIdenticalVertices |
 			aiProcess_SortByPType));
+		Darknec::logger(importer.GetErrorString());
 
+		Darknec::logger("Mesh", Darknec::LogLevel::LOG_LOG, "Compiled %s", filename);
 		model = Model::ConvertAssimpToDarknec(scene);
 		Darknec::CObjLoader::write(std::ofstream(std::string(filename) + ".cobj", std::ios::binary), model);
 	
 	
 	}
 	else {
-		Darknec::logger("Sad face :(");
+		Darknec::logger("Could not load object %s", filename);
 	}
 
-
-
-	Darknec::logger("%i", model.meshes_.size());
 
 	std::vector<float> verticest = model.meshes_[0].vertices_;
 	std::vector<float> normalst = model.meshes_[0].normals_;
@@ -74,7 +73,7 @@ Mesh::Mesh(const char* filename) {
 	this->indiciescount = indiciest.size();
 
 
-	GLuint texture = SOIL_load_OGL_texture("assets/texture2.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	GLuint texture = SOIL_load_OGL_texture("assets/textures/texture2.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 

@@ -9,6 +9,10 @@
 #include <windows.h>
 #endif
 
+#include <State.h>
+
+
+
 /**
 * Logging to console manager
 * Does not write to file
@@ -21,6 +25,24 @@ Darknec::LoggingManager::LoggingManager() : LoggingManager("") {}
 * @param file file to write to. Appends to this file everytime the game is run.
 */
 Darknec::LoggingManager::LoggingManager(const char* file) : file_(file) {
+	HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE); //Console Handle
+
+	COORD bufferSize;
+	SMALL_RECT consSize;
+	CONSOLE_SCREEN_BUFFER_INFO oldWindowInfo;
+	GetConsoleScreenBufferInfo(hstdout, &oldWindowInfo);
+
+	bufferSize.X = 120;
+	bufferSize.Y = 1000;
+	SetConsoleScreenBufferSize(hstdout, bufferSize);
+
+
+	consSize.Left = 0;
+	consSize.Top = 0;
+	consSize.Right = 119;
+	consSize.Bottom = 24;
+	SetConsoleWindowInfo(hstdout, TRUE, &consSize);
+	
 	logColours_.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	logColours_.push_back(FOREGROUND_GREEN | FOREGROUND_BLUE);
 	logColours_.push_back(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
@@ -47,7 +69,7 @@ void Darknec::LoggingManager::setFile(const char* file) {
 void Darknec::LoggingManager::operator()(const char* format, ...) {
 	va_list varArgs;
 	va_start(varArgs, format);
-	this->WINDOWSlog("", LogLevel::LOG_DEBUG, format, varArgs);
+	this->internalLog("", LogLevel::LOG_DEBUG, format, varArgs);
 	va_end(varArgs);
 }
 
@@ -60,7 +82,7 @@ void Darknec::LoggingManager::operator()(const char* format, ...) {
 void Darknec::LoggingManager::operator()(LogLevel level, const char* format, ...) {
 	va_list varArgs;
 	va_start(varArgs, format);
-	this->WINDOWSlog("", level, format, varArgs);
+	this->internalLog("", level, format, varArgs);
 	va_end(varArgs);
 }
 
@@ -74,8 +96,12 @@ void Darknec::LoggingManager::operator()(LogLevel level, const char* format, ...
 void Darknec::LoggingManager::operator()(const char* owner, LogLevel level, const char* format, ...) {
 	va_list varArgs;
 	va_start(varArgs, format);
-	this->WINDOWSlog(owner, level, format, varArgs);
+	this->internalLog(owner, level, format, varArgs);
 	va_end(varArgs);
+}
+
+void Darknec::LoggingManager::internalLog(const char* owner, LogLevel level, const char* format, va_list varargs) {
+	this->WINDOWSlog(owner, level, format, varargs);
 }
 
 /**

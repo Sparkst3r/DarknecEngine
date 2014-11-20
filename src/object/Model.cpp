@@ -10,6 +10,59 @@ Messh::Messh() {
 	numVertices_ = 0;
 }
 
+std::string Material::getName() {
+	return name_;
+}
+
+bool Material::get(MATERIALDATA dataKey, std::string& textureRef) {
+	if (dataKey >= MATERIALDATA::TEXTURE_DIFFUSE && dataKey <= MATERIALDATA::TEXTURE_PARALLAX) {
+		textureRef = this->textures_[dataKey];
+		return true;
+	}
+	return false;
+}
+bool Material::get(MATERIALDATA dataKey, glm::vec3& colourRef) {
+	if (dataKey >= MATERIALDATA::COLOUR_AMBIENT && dataKey <= MATERIALDATA::COLOUR_TRANSPARANT) {
+		colourRef = this->colours_[dataKey];
+		return true;
+	}
+	return false;
+}
+bool Material::get(MATERIALDATA dataKey, float& scalarRef) {
+	if (dataKey >= MATERIALDATA::COLSCA_SHININESS && dataKey <= MATERIALDATA::COLSCA_SHININESS_STRENGTH) {
+		scalarRef = this->colourScalars_[dataKey];
+		return true;
+	}
+	return false;
+}
+
+
+
+
+
+bool Material::set(MATERIALDATA dataKey, std::string textureRef) {
+	if (dataKey >= MATERIALDATA::TEXTURE_DIFFUSE && dataKey <= MATERIALDATA::TEXTURE_PARALLAX) {
+		this->textures_[dataKey] = textureRef;
+		return true;
+	}
+	return false;
+}
+bool Material::set(MATERIALDATA dataKey, glm::vec3 colourRef) {
+	if (dataKey >= MATERIALDATA::COLOUR_AMBIENT && dataKey <= MATERIALDATA::COLOUR_TRANSPARANT) {
+		this->colours_[dataKey] = colourRef;
+		return true;
+	}
+	return false;
+}
+bool Material::set(MATERIALDATA dataKey, float scalarRef) {
+	if (dataKey >= MATERIALDATA::COLSCA_SHININESS && dataKey <= MATERIALDATA::COLSCA_SHININESS_STRENGTH) {
+		this->colourScalars_[dataKey] = scalarRef;
+		return true;
+	}
+	return false;
+}
+
+
 Model::Model() {
 }
 
@@ -18,7 +71,6 @@ Model Model::ConvertAssimpToDarknec(aiScene* scene) {
 	Model model;
 
 	model.numMeshes_ = scene->mNumMeshes;
-	Darknec::logger("sss %i", scene->mNumMeshes);
 	for (int mesh = 0; mesh < scene->mNumMeshes; mesh++) {
 
 		Messh messh = Messh();
@@ -67,10 +119,34 @@ Model Model::ConvertAssimpToDarknec(aiScene* scene) {
 			}
 		}
 		
+		messh.materialIndex_ = scene->mMeshes[mesh]->mMaterialIndex;
 		model.meshes_.push_back(messh);
-		Darknec::logger("Derpy %i", model.meshes_.size());
 	}
 	
+	model.numMaterials_ = scene->mNumMaterials;
+
+	for (int mat = 0; mat < scene->mNumMaterials; mat++) {
+		Material darkMat;
+		aiMaterial* aiMat = scene->mMaterials[mat];
+
+
+		aiColor3D aiAmb;
+		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, aiAmb);
+		glm::vec3 darkAmb = glm::vec3(aiAmb.r, aiAmb.g, aiAmb.b);
+		darkMat.set(Material::MATERIALDATA::COLOUR_AMBIENT, darkAmb);
+
+		aiColor3D aiDif;
+		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, aiDif);
+		glm::vec3 darkDif = glm::vec3(aiDif.r, aiDif.g, aiDif.b);
+		darkMat.set(Material::MATERIALDATA::COLOUR_DIFFUSE, darkDif);
+
+		aiColor3D aiSpe;
+		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, aiSpe);
+		glm::vec3 darkSpe = glm::vec3(aiSpe.r, aiSpe.g, aiSpe.b);
+		darkMat.set(Material::MATERIALDATA::COLOUR_DIFFUSE, darkSpe);
+
+		model.materials_.push_back(darkMat);
+	}
 
 
 	return model;

@@ -6,6 +6,10 @@
 #include <DarknecEngine.h>
 #include <State.h>
 
+//For temp hack
+#include <system/ComponentSystem.h>
+#include <system/GameObjectSystem.h>
+
 /**
 * @namespace Darknec
 * @brief Base namespace
@@ -25,6 +29,19 @@ namespace Darknec {
 	*/
 	namespace Detail {
 		
+		void squirrelLogger(HSQUIRRELVM v, const char* s, ...) {
+			va_list vl;
+			va_start(vl, s);
+			Darknec::logger.internalLog("Squirrel Script", LogLevel::LOG_LOG, s, vl);
+			va_end(vl);
+		}
+		void squirrelError(HSQUIRRELVM v, const char* s, ...) {
+			va_list vl;
+			va_start(vl, s);
+			Darknec::logger.internalLog("Squirrel Script", LogLevel::LOG_ERROR, s, vl);
+			va_end(vl);
+		}
+
 		/**
 		* loadSettings
 		* Load vital settings from Settings.xml.
@@ -113,6 +130,11 @@ namespace Darknec {
 								Darknec::logger("Settings Loader", LogLevel::LOG_LOG, "Window Flag: %s.", str.c_str());
 								windowFlags |= flagMap[str];
 							}
+							else if (std::string(windowIter->name()) == std::string("BaseAssetPath")) {
+								std::string str = std::string(windowIter->value());
+								Darknec::logger("Settings Loader", LogLevel::LOG_LOG, "Base Path: %s.", str.c_str());
+								Darknec::baseAssetPath = str;
+							}
 						}
 					}
 				}
@@ -136,6 +158,14 @@ namespace Darknec {
 		* @return error state. Set to 0 if setup is successful
 		*/
 		int InitEngine() {
+			Darknec::squirrel = sq_open(1024);
+			Sqrat::DefaultVM::Set(Darknec::squirrel);
+			Darknec::darknec = Sqrat::Table(Darknec::squirrel);
+			sq_setprintfunc(Darknec::squirrel, &squirrelLogger, &squirrelError);
+			Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "Squirrel binding (Sqrat) initialised");
+
+
+
 			Darknec::Callback::Settings* settings = loadSettings();
 
 			///Setup SDL
@@ -155,6 +185,7 @@ namespace Darknec {
 			else {
 				Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "SDL_Image extension initialised");
 			}
+
 
 			///Set GL attributes
 			for (Darknec::Callback::WindowAttribute attr : settings->attributes) {
@@ -260,7 +291,11 @@ namespace Darknec {
 			SDL_Event currentEvent;
 
 			while (Darknec::RUNSTATE != Darknec::STOPPED && Darknec::RUNSTATE != Darknec::CRASHED) {
+				auto start = std::chrono::high_resolution_clock::now();
+
 				while (SDL_PollEvent(&currentEvent)) {
+					
+
 
 					if (currentEvent.type == SDL_QUIT) {
 						Darknec::RUNSTATE = Darknec::STOPPED;
@@ -293,6 +328,16 @@ namespace Darknec {
 					Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Illegal State: NULL render method is not supported. Define a render method");
 					DarknecShutdown(6);
 				}
+
+				long long microsThisFrame = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count();
+				if (microsThisFrame > 0) { //This should always be true, unless you play on a super computer.
+					Darknec::RenderFPS = 1000000 / microsThisFrame; /* Microseconds to frames per second */
+				}
+				else {
+					Darknec::RenderFPS = 1000;
+				}
+				
+
 			}
 		}
 	}
@@ -357,7 +402,9 @@ namespace Darknec {
 	* @return always 0. Satisfies main()'s return value. Ensures or at least puts off tampering of state in main().
 	*/
 	int DarknecShutdown(int close) {
-
+		//Shutdown componentsystem. Temp hack
+		delete sys1;
+		delete sys2;
 
 		//Got past engine initialisation
 		if (close > 4) {
@@ -384,6 +431,7 @@ namespace Darknec {
 			SDL_Quit();
 		}
 
+		//sq_close(Darknec::squirrel);
 
 		Darknec::logger("DarknecEngine", LogLevel::LOG_SECTION, "=============-END-==============");
 		

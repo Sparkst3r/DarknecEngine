@@ -8,6 +8,8 @@
 #include <SDL.h>
 
 
+Shader Shader::activeShader;
+
 /**
 * Shader
 * Default Constructor
@@ -19,6 +21,15 @@ Shader::~Shader() {
 	//TODO fix destructor once stripping out user shader manipulation. Engine hasnt initialised when global variables are being created and causes premature destruction.
 }
 
+Shader Shader::getActiveShader() {
+
+	return Shader::activeShader;
+}
+
+void Shader::setID(GLint ID) {
+	this->ID = ID;
+}
+
 void Shader::destroy() {
 	glDeleteProgram(this->ID);
 }
@@ -27,7 +38,7 @@ void Shader::reload() {
 	std::ifstream file(filename);
 
 	if (file) {
-		Darknec::logger("Shader", Darknec::LogLevel::LOG_INFO, "Reloaded shader file: %s", filename);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_INFO, "Reloaded shader file: %s", this->filename.c_str());
 		std::stringstream buffer;
 		buffer << file.rdbuf();
 
@@ -39,14 +50,19 @@ void Shader::reload() {
 		file.close();
 	}
 	else {
-		Darknec::logger(Darknec::LogLevel::LOG_ERROR, "Couldn't reload shader file: %s", filename);
+		Darknec::logger(Darknec::LogLevel::LOG_ERROR, "Couldn't reload shader file: %s", this->filename.c_str());
 	}
+}
+
+bool Shader::isValid() {
+	return this->valid;
 }
 
 /**
 * Make shader active
 */
 void Shader::use() {
+	Shader::activeShader = *this;
 	glUseProgram(this->ID);
 }
 
@@ -66,12 +82,12 @@ void Shader::bindFragmentOutput(const char* location) {
 * Creates a shader program from source code
 * @param filename shader file to load
 */
-Shader::Shader(const char* filename) {
-	this->filename = filename;
-	std::ifstream file(filename);
+Shader::Shader(std::string filename) {
+	this->filename = Darknec::baseAssetPath + filename;
+	std::ifstream file(this->filename);
 
 	if (file) {
-		Darknec::logger("Shader", Darknec::LogLevel::LOG_INFO, "Found shader file: %s", filename);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_INFO, "Found shader file: %s", this->filename.c_str());
 		std::stringstream buffer;
         buffer << file.rdbuf();
 
@@ -83,7 +99,7 @@ Shader::Shader(const char* filename) {
         file.close();
 	}
 	else {
-		Darknec::logger("Shader", Darknec::LogLevel::LOG_ERROR, "Couldn't find shader file: %s", filename);
+		Darknec::logger("Shader", Darknec::LogLevel::LOG_ERROR, "Couldn't find shader file: %s", this->filename.c_str());
 	}
 
 }
@@ -96,10 +112,10 @@ Shader::Shader(const char* filename) {
 * @param reload should the shader replace a previous instance
 * @return the shader ID 
 */
-GLuint Shader::createShader(std::vector<std::string> stages, bool reload) {
-	GLuint tempID = glCreateProgram();
+GLint Shader::createShader(std::vector<std::string> stages, bool reload) {
+	GLint tempID = glCreateProgram();
 
-	std::vector<GLuint> shaderIDs;
+	std::vector<GLint> shaderIDs;
 	std::string shadersUsed;
 
 	GLenum shaderTypes[] = {GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, GL_FRAGMENT_SHADER};
@@ -107,7 +123,7 @@ GLuint Shader::createShader(std::vector<std::string> stages, bool reload) {
 	for (int stage = 0; stage < 5; stage++) {
 		if (stages[stage] != "") { //Ensure shader has content
 			shadersUsed += typeStrings[stage]; //Append shader type string
-			GLuint stageTemp = glCreateShader(shaderTypes[stage]); //Make shader with a type
+			GLint stageTemp = glCreateShader(shaderTypes[stage]); //Make shader with a type
 			const char* stageChar = stages[stage].c_str(); 
 			glShaderSource(stageTemp, 1, &stageChar, NULL);
 			glCompileShader(stageTemp);
@@ -136,6 +152,7 @@ GLuint Shader::createShader(std::vector<std::string> stages, bool reload) {
 	}
 	else {
 		Darknec::logger(Darknec::LogLevel::LOG_INFO, "Linked shader with stages: %s", shadersUsed.c_str());
+		this->valid = true;
 	}
 
 	for (GLuint shaderID : shaderIDs) {
@@ -425,3 +442,44 @@ void Shader::setUniformUnsignedInt4(const char* location, unsigned int value, un
 }
 
 #pragma endregion
+
+#pragma region Vector
+
+/**
+* Set 2 float vector uniform value in shader program
+* @param location name of variable to insert value in to
+* @param value vector value
+*/
+void Shader::setUniformFloatVec2(const char* location, glm::vec2 value) {
+	glUniform2fv(this->getUniform(location), 2, glm::value_ptr(value));
+}
+/**
+* Set 3 float vector uniform value in shader program
+* @param location name of variable to insert value in to
+* @param value vector value
+*/
+void Shader::setUniformFloatVec3(const char* location, glm::vec3 value) {
+	glUniform3fv(this->getUniform(location), 3, glm::value_ptr(value));
+}
+/**
+* Set 4 float vector uniform value in shader program
+* @param location name of variable to insert value in to
+* @param value vector value
+*/
+void Shader::setUniformFloatVec4(const char* location, glm::vec4 value) {
+	glUniform4fv(this->getUniform(location), 4, glm::value_ptr(value));
+}
+
+//void setUniformIntVec2(const char* location, glm::vec2 value);
+//void setUniformIntVec3(const char* location, glm::vec3 value);
+//void setUniformIntVec4(const char* location, glm::vec4 value);
+//
+//void setUniformUnsignedIntVec2(const char* location, glm::vec2 value);
+//void setUniformUnsignedIntVec3(const char* location, glm::vec3 value);
+//void setUniformUnsignedIntVec4(const char* location, glm::vec4 value);
+
+#pragma endregion
+
+void Shader::setUniformFloatMatrix3(const char* location, bool transpose, glm::mat3 matrix) {
+	glUniformMatrix3fv(this->getUniform(location), 1, transpose, glm::value_ptr(matrix));
+}

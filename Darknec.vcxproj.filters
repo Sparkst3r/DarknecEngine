@@ -136,11 +136,14 @@
     <ClInclude Include="include\object\CObjLoader.h">
       <Filter>include\object</Filter>
     </ClInclude>
-    <ClInclude Include="include\object\fast_tiny_obj_loader.h">
-      <Filter>include\object</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\shader\Shader.h">
       <Filter>include\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\component\ComponentSimpleText.h">
+      <Filter>include\component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\ShaderSystem.h">
+      <Filter>include\system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -195,11 +198,14 @@
     <ClCompile Include="src\object\Model.cpp">
       <Filter>src\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\object\fast_tiny_obj_loader.cc">
-      <Filter>src\object</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\shader\Shader.cpp">
       <Filter>src\render\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentSimpleText.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\ShaderSystem.cpp">
+      <Filter>src\system</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

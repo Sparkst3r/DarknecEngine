@@ -1,4 +1,5 @@
 #include <component/ComponentMesh.h>
+#include <system/ShaderSystem.h>
 
 ComponentMesh::ComponentMesh(GameObject* container) {
 	container_ = container;
@@ -9,18 +10,12 @@ rapidxml::xml_node<>* ComponentMesh::write(rapidxml::xml_node<>* node) {
 }
 void ComponentMesh::read(rapidxml::xml_node<>* node) {
 	this->trans = Darknec::ComponentRWUtils::readString(node, "ComponentRequirement");
-	this->model_ = new Mesh(Darknec::ComponentRWUtils::readString(node, "mesh").c_str());
+	this->model_ = new Mesh(std::string(Darknec::baseAssetPath + Darknec::ComponentRWUtils::readString(node, "mesh")).c_str());
 }
 void ComponentMesh::update() {
-
-}
-
-void ComponentMesh::renderObject() {
 	ComponentTransform* transform = container_->getCastComponent<ComponentTransform>(std::string("transform"));
 
-
-	GLint id;
-	glGetIntegerv(GL_CURRENT_PROGRAM, &id);
+	sys3->useShader("Phong");
 
 
 	glm::mat4 matrix;
@@ -31,19 +26,16 @@ void ComponentMesh::renderObject() {
 
 	glUniformMatrix4fv(4, 1, GL_FALSE, glm::value_ptr(matrix));
 
-	UnifID uniformID1 = glGetUniformLocation(id, "frontMaterial.ambient");
-	UnifID uniformID2 = glGetUniformLocation(id, "frontMaterial.diffuse");
-	UnifID uniformID3 = glGetUniformLocation(id, "frontMaterial.specular");
-	UnifID uniformID4 = glGetUniformLocation(id, "frontMaterial.shininess");
+	Shader s = sys3->getShader("Phong");
 
-	glUniform4f(uniformID1, 0.2f, 0.3f, 0.9f, 1.0f);
-	glUniform4f(uniformID2, 0.2f, 0.3f, 0.9f, 1.0f);
-	glUniform4f(uniformID3, 0.2f, 0.3f, 0.9f, 1.0f);
-	glUniform1f(uniformID4, 10.0f);
+	s.setUniformFloat4("frontMaterial.ambient", 0.2f, 0.3f, 0.9f, 1.0f);
+	s.setUniformFloat4("frontMaterial.diffuse", 0.2f, 0.3f, 0.9f, 1.0f);
+	s.setUniformFloat4("frontMaterial.specular", 0.2f, 0.3f, 0.9f, 1.0f);
+	s.setUniformFloat("frontMaterial.shininess", 20.0f);
 
 	model_->Render();
 
-
+	//sys3->restorePrevious();
 }
 
 void ComponentMesh::setShader(Shader* shader) {

@@ -1,4 +1,5 @@
 #include <object/World.h>
+#include <component/ComponentSimpleText.h>
 
 World::World() {
 	broadphase = new btDbvtBroadphase();
@@ -6,7 +7,7 @@ World::World() {
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	solver = new btSequentialImpulseConstraintSolver;
 	physicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-
+	
 
 }
 
@@ -20,11 +21,13 @@ World::~World() {
 
 void World::spawnObject(GameObject* object, glm::vec3 coordinates, std::string positionID, std::string physicsID) {
 
-
-	ComponentPhysics* phys = object->getCastComponent<ComponentPhysics>(physicsID);
-	if (phys != NULL) {
-		physicsWorld->addRigidBody(phys->rigidBody_);
+	if (object->hasComponent(physicsID)) {
+		ComponentPhysics* phys = object->getCastComponent<ComponentPhysics>(physicsID);
+		if (phys != NULL) {
+			physicsWorld->addRigidBody(phys->rigidBody_);
+		}
 	}
+
 
 	gameObjects.push_back(object);
 }
@@ -34,13 +37,21 @@ void World::spawnObject(GameObject* object, glm::vec3 coordinates) {
 }
 
 
+
 void World::renderAllObjects() {
 
 	for (GameObject* object : gameObjects) {
+
 		if (object->hasComponent("mesh")) {
 			ComponentMesh* mesh = object->getCastComponent<ComponentMesh>("mesh");
-			mesh->renderObject();
+			mesh->update();
 		}
+
+		if (object->hasComponent("text")) {
+			ComponentSimpleText* mesh = object->getCastComponent<ComponentSimpleText>("text");
+			mesh->update();
+		}
+
 	}
 }
 

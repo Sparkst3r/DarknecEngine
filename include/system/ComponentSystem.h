@@ -177,6 +177,8 @@ public:
 	*/
 	ComponentSystem();
 
+	~ComponentSystem();
+
 	/**
 	* registerComponent
 	*

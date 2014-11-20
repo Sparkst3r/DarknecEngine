@@ -3,12 +3,24 @@
 #include <component/ComponentCamera.h>
 #include <component/ComponentMesh.h>
 #include <component/ComponentPhysics.h>
+#include <component/ComponentSimpleText.h>
 
 ComponentSystem::ComponentSystem() {
+	//Move this to a script when LUA is implemented.
 	this->registerComponent("ComponentTransform", new ComponentTransform::ComponentFactoryDefault(), new ComponentTransform::ComponentRequirementFactoryDefault());
 	this->registerComponent("ComponentCamera", new ComponentCamera::ComponentFactoryDefault(), new ComponentCamera::ComponentRequirementFactoryDefault());
 	this->registerComponent("ComponentMesh", new ComponentMesh::ComponentFactoryDefault(), new ComponentMesh::ComponentRequirementFactoryDefault());
 	this->registerComponent("ComponentPhysics", new ComponentPhysics::ComponentFactoryDefault(), new ComponentPhysics::ComponentRequirementFactoryDefault());
+	this->registerComponent("ComponentSimpleText", new ComponentSimpleText::ComponentFactoryDefault(), new ComponentSimpleText::ComponentRequirementFactoryDefault());
+}
+
+ComponentSystem::~ComponentSystem() {
+	for (std::pair<std::string, ComponentFactory*> comp : this->factories) {
+		delete comp.second;
+	}
+	for (std::pair<std::string, ComponentRequirementFactory*> comp : this->requirementFactories) {
+		delete comp.second;
+	}
 }
 
 std::hash_map<std::string, ComponentFactory*> ComponentSystem::getComponentFactoryHash() const {

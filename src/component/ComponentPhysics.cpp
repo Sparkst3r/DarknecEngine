@@ -42,10 +42,10 @@ void ComponentPhysics::read(rapidxml::xml_node<>* node) {
 			}
 			else {
 				if (type == std::string("STATICPLANE")) {
+			
 					this->isStatic = true;
 					glm::vec3 v = Darknec::ComponentRWUtils::readVector3(dataIter, "PlaneVector", "X", "Y", "Z");
 					float planeConstant = Darknec::ComponentRWUtils::readFloat(dataIter, "PlaneConstant");
-					
 					btVector3 vectorbt = btVector3(v.x, v.y, v.z);
 
 

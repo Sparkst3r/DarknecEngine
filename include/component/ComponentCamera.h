@@ -59,4 +59,4 @@ private:
 
 
 };
-#endif // !DARKNEC_COMPONENT_H
+#endif // !DARKNEC_COMPONENTCAMERA_H

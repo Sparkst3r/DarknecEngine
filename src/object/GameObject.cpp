@@ -70,6 +70,7 @@ GameObject* GameObject::readFile(const char* file) {
 GameObject::~GameObject() {
 	for (std::pair<std::string, Component*> comp : components) {
 		delete comp.second;
+		comp.second = NULL;
 	}
 }
 

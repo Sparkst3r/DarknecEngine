@@ -16,19 +16,20 @@ public:
 	Shader::Shader() {}
 
 
-	Shader(const char* filename);
+	Shader(std::string filename);
 	~Shader();
-
 
 	void destroy();
 	void use();
 	void reload();
+	bool isValid();
 
 	AttrID getAttribute(const char* attrName);
 	UnifID getUniform(const char* uniformName);
 
 	void bindFragmentOutput(const char* location);
 
+	
 
 #pragma region Single Values
 	/**
@@ -129,8 +130,23 @@ public:
 
 #pragma region Vector
 
+	/**
+	* Set 2 float vector uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value vector value
+	*/
 	void setUniformFloatVec2(const char* location, glm::vec2 value);
+	/**
+	* Set 3 float vector uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value vector value
+	*/
 	void setUniformFloatVec3(const char* location, glm::vec3 value);
+	/**
+	* Set 4 float vector uniform value in shader program
+	* @param location name of variable to insert value in to
+	* @param value vector value
+	*/
 	void setUniformFloatVec4(const char* location, glm::vec4 value);
 
 	void setUniformIntVec2(const char* location, glm::vec2 value);
@@ -160,8 +176,11 @@ public:
 #pragma endregion
 
 private:
-	GLuint ID = 0;
-	const char* filename;
+	GLint ID = 0;
+
+	bool valid = false;
+
+	std::string filename;
 
 	//TODO fix shader error handling
 	//For sanity. Prevents console spam but messy hack.
@@ -169,7 +188,11 @@ private:
 
 	std::vector<std::string> preprocess(std::string raw);
 
-	GLuint createShader(std::vector<std::string> stages, bool reload);
+	GLint createShader(std::vector<std::string> stages, bool reload);
+
+	void setID(GLint ID);
+
+
 
 };
 

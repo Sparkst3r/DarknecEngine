@@ -81,7 +81,7 @@ namespace Darknec {
 		*/
 		void operator()(const char* owner, LogLevel level, const char* format, ...);
 
-
+		void internalLog(const char* owner, LogLevel level, const char* format, va_list);
 
 	private:
 		///File to log to

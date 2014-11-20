@@ -34,6 +34,13 @@ namespace Darknec {
 	int GLVersion_MINOR;
 	int GLSLVersion;
 
+	int RenderFPS;
+
 	RunState RUNSTATE = STOPPED;
 	LoggingManager logger = LoggingManager("DarknecLog.txt");
+
+	HSQUIRRELVM squirrel;
+	Sqrat::Table darknec;
+
+	std::string baseAssetPath;
 }

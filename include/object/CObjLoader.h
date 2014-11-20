@@ -7,7 +7,7 @@
 namespace Darknec {
 	namespace CObjLoader {
 		void write(std::ofstream& stream, Model meshes);
-		Model read(std::ifstream& stream);
+		Model read(std::string filename);
 	}
 }
 

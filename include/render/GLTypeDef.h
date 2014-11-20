@@ -12,6 +12,9 @@ typedef GLuint VBO;
 /* Index Buffer Object type */
 typedef GLuint IBO;
 
+/* Frame Buffer Object type */
+typedef GLuint FBO;
+
 
 /* Shader Uniform Buffer Object id */
 typedef GLuint UBO;
