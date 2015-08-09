@@ -10,27 +10,28 @@ namespace Darknec {
 		#pragma region Settings
 
 		struct WindowAttribute {
-			WindowAttribute(SDL_GLattr attr, int value) {
+			WindowAttribute(long attr, std::string value) {
 				this->attr = attr;
 				this->value = value;
 			}
-			SDL_GLattr attr;
-			int value;
+			long attr;
+			std::string value;
 		};
 
 		struct Settings {
-			Uint32 windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+			//Uint32 windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 			std::string windowName = "Darknec Engine Window";
 
 			std::vector<WindowAttribute> attributes;
+			//std::vector<WindowFlag> flags;
 
 			int windowWidth = 640;
 			int windowHeight = 480;
 
-			int windowX = SDL_WINDOWPOS_CENTERED;
-			int windowY = SDL_WINDOWPOS_CENTERED;
+			int windowX = 0;
+			int windowY = 0;
 
-			SDL_Surface* windowIcon;
+			//SDL_Surface* windowIcon;
 
 			
 		};
@@ -38,19 +39,19 @@ namespace Darknec {
 #pragma endregion
 
 		/* Callback for init */
-		typedef void(*InitCallback) (int, char**, SDL_Window*, SDL_GLContext);
+		typedef void(*InitCallback) (int, char**, GLFWwindow*);
 		void RegisterInitCallback(InitCallback callback);
 		InitCallback getInitCallback();
 		
-		/* Callback for resize event */
-		typedef void(*EventCallback) (SDL_Event);
-		void RegisterEventCallback(EventCallback callback);
-		EventCallback getEventCallback();
+		///* Callback for resize event */
+		//typedef void(*EventCallback) (SDL_Event);
+		//void RegisterEventCallback(EventCallback callback);
+		//EventCallback getEventCallback();
 
-		/* Callback for resize event */
-		typedef void(*ResizeCallback) (SDL_Event);
-		void RegisterResizeCallback(ResizeCallback callback);
-		ResizeCallback getResizeCallback();
+		///* Callback for resize event */
+		//typedef void(*ResizeCallback) (SDL_Event);
+		//void RegisterResizeCallback(ResizeCallback callback);
+		//ResizeCallback getResizeCallback();
 
 		/* Callback for logic event */
 		typedef void(*LogicCallback) ();
@@ -58,7 +59,7 @@ namespace Darknec {
 		LogicCallback getLogicCallback();
 
 		/* Callback for render event */
-		typedef void(*RenderCallback) (SDL_Window*);
+		typedef void(*RenderCallback) (GLFWwindow*);
 		void RegisterRenderCallback(RenderCallback callback);
 		RenderCallback getRenderCallback();
 

@@ -13,10 +13,13 @@ public:
 
 	ComponentTransform(GameObject* container);
 
+	virtual void init();
 	virtual void update() {}
-	virtual void read(rapidxml::xml_node<>* node);
+	virtual bool validate();
 
-	virtual rapidxml::xml_node<>* write(rapidxml::xml_node<>*) {
+
+	virtual void read(XMLNode node);
+	virtual XMLNode write(XMLNode node) {
 		return NULL;
 	}
 

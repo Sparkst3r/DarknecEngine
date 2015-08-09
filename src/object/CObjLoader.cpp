@@ -68,7 +68,7 @@ namespace Darknec {
 				if (!mat.colours_.empty()) {
 					stream.write((const char*) &colourFlag, dataWidth);
 
-					typedef std::hash_map<int, glm::vec3>::iterator ite;
+					typedef std::hash_map<Material::MATERIALDATA, glm::vec3>::iterator ite;
 					for (ite iterator = mat.colours_.begin(); iterator != mat.colours_.end(); iterator++) {
 						int enumIndex = iterator->first;
 						glm::vec3 colour = iterator->second;
@@ -106,7 +106,7 @@ namespace Darknec {
 			Model model = Model();
 			const auto dataWidth = sizeof(float); //Size of float
 
-			int start = SDL_GetTicks();
+			//int start = SDL_GetTicks();
 
 			int meshCount = 0;
 			stream.read((char*) &meshCount, sizeof(int));
@@ -115,7 +115,7 @@ namespace Darknec {
 
 
 			for (int mesh = 0; mesh < meshCount; mesh++) {
-				Messh messh;
+				Mesh messh;
 				
 
 
@@ -181,7 +181,7 @@ namespace Darknec {
 							int enumIndex = currentIndex;
 							glm::vec3 colour;
 							stream.read((char*) &colour[0], dataWidth * 3);
-							mater.colours_[enumIndex] = colour;
+							mater.colours_[Material::MATERIALDATA(enumIndex)] = colour;
 						}
 					}
 				}
@@ -190,7 +190,7 @@ namespace Darknec {
 
 
 
-			Darknec::logger("COBJLoader", Darknec::LogLevel::LOG_LOG, "Loading object: %s, Took %i milliseconds", filename.c_str(), SDL_GetTicks() - start);
+			//Darknec::logger("COBJLoader", Darknec::LogLevel::LOG_LOG, "Loading object: %s, Took %i milliseconds", filename.c_str(), SDL_GetTicks() - start);
 
 			stream.close();
 			return model;

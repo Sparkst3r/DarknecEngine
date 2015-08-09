@@ -68,15 +68,15 @@ GameObject* GameObject::readFile(const char* file) {
 
 
 GameObject::~GameObject() {
-	for (std::pair<std::string, Component*> comp : components) {
+	for (std::pair<std::string, Component*> comp : components_) {
 		delete comp.second;
 		comp.second = NULL;
 	}
 }
 
 Component* GameObject::getComponent(std::string ID) {
-	if (components[ID] != NULL) {
-		return components[ID];
+	if (components_[ID] != NULL) {
+		return components_[ID];
 	}
 	else {
 		Darknec::logger("GameObject", Darknec::LogLevel::LOG_ERROR, "No component with ID: %s", ID.c_str());
@@ -85,13 +85,13 @@ Component* GameObject::getComponent(std::string ID) {
 }
 
 bool GameObject::hasComponent(std::string ID) {
-	return components[ID] != NULL;
+	return components_[ID] != NULL;
 }
 
 
 
 std::string GameObject::registerComponent(Component* component, std::string ID) {
-	components[ID] = component;
+	components_[ID] = component;
 	return ID;
 }
 

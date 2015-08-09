@@ -13,12 +13,9 @@ public:
 	World();
 	~World();
 
+	GameObject* getObject(std::string name);
 
-	void spawnObject(GameObject* object, glm::vec3 coordinates);
-
-
-	void spawnObject(GameObject* object, glm::vec3 coordinates, std::string positionID, std::string physicsID);
-
+	void spawnObject(std::string type, std::string ID);
 
 	void renderAllObjects();
 
@@ -33,7 +30,7 @@ private:
 	btCollisionDispatcher* dispatcher;
 	btSequentialImpulseConstraintSolver* solver;
 
-	std::vector<GameObject*> gameObjects;
+	std::hash_map<std::string, GameObject*> gameObjects;
 
 };
 

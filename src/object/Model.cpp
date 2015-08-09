@@ -1,7 +1,7 @@
 #include <object/Model.h>
 #include <State.h>
 
-Messh::Messh() {
+Mesh::Mesh() {
 	hasNormals_ = false;
 	hasNormals_ = false;
 	numIndices_ = 0;
@@ -10,11 +10,44 @@ Messh::Messh() {
 	numVertices_ = 0;
 }
 
+
+void Mesh::setupGLBuffers() {
+	glGenVertexArrays(1, &this->vao_);
+	glBindVertexArray(this->vao_);
+
+	glGenBuffers(1, &this->ibo_);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ibo_);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->numIndices_ * sizeof(unsigned int), &indices_[0], GL_STATIC_DRAW);
+
+
+	glEnableVertexAttribArray(0);
+	glGenBuffers(1, &this->vboVertices_);
+	glBindBuffer(GL_ARRAY_BUFFER, this->vboVertices_);
+	glBufferData(GL_ARRAY_BUFFER, this->numVertices_ * sizeof(float), &this->vertices_[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+
+	if (this->hasNormals_) {
+		glEnableVertexAttribArray(1);
+		glGenBuffers(1, &this->vboNormals_);
+		glBindBuffer(GL_ARRAY_BUFFER, this->vboNormals_);
+		glBufferData(GL_ARRAY_BUFFER, this->numNormals_ * sizeof(float), &this->normals_[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+	}
+
+	if (this->hasUVS_) {
+		glEnableVertexAttribArray(2);
+		glGenBuffers(1, &this->vboUVs_);
+		glBindBuffer(GL_ARRAY_BUFFER, this->vboUVs_);
+		glBufferData(GL_ARRAY_BUFFER, this->numUVs_ * sizeof(float), &this->UVs_[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+	}
+}
+
 std::string Material::getName() {
 	return name_;
 }
 
-bool Material::get(MATERIALDATA dataKey, std::string& textureRef) {
+bool Material::get(MATERIALDATA dataKey, Texture& textureRef) {
 	if (dataKey >= MATERIALDATA::TEXTURE_DIFFUSE && dataKey <= MATERIALDATA::TEXTURE_PARALLAX) {
 		textureRef = this->textures_[dataKey];
 		return true;
@@ -40,7 +73,7 @@ bool Material::get(MATERIALDATA dataKey, float& scalarRef) {
 
 
 
-bool Material::set(MATERIALDATA dataKey, std::string textureRef) {
+bool Material::set(MATERIALDATA dataKey, Texture textureRef) {
 	if (dataKey >= MATERIALDATA::TEXTURE_DIFFUSE && dataKey <= MATERIALDATA::TEXTURE_PARALLAX) {
 		this->textures_[dataKey] = textureRef;
 		return true;
@@ -63,17 +96,16 @@ bool Material::set(MATERIALDATA dataKey, float scalarRef) {
 }
 
 
-Model::Model() {
-}
+Model::Model() {}
 
 
 Model Model::ConvertAssimpToDarknec(aiScene* scene) {
 	Model model;
 
 	model.numMeshes_ = scene->mNumMeshes;
-	for (int mesh = 0; mesh < scene->mNumMeshes; mesh++) {
+	for (unsigned int mesh = 0; mesh < scene->mNumMeshes; mesh++) {
 
-		Messh messh = Messh();
+		Mesh messh = Mesh();
 		int vertCount = scene->mMeshes[mesh]->mNumVertices;
 		int normCount = scene->mMeshes[mesh]->mNumVertices;
 		int indiCount = scene->mMeshes[mesh]->mNumFaces * 3; //All imported models must be comprised of tris.
@@ -87,7 +119,7 @@ Model Model::ConvertAssimpToDarknec(aiScene* scene) {
 		messh.hasNormals_ = scene->mMeshes[mesh]->HasNormals();
 		messh.hasUVS_ = scene->mMeshes[mesh]->HasTextureCoords(0);
 
-		for (int face = 0; face < scene->mMeshes[mesh]->mNumFaces; face++) {
+		for (unsigned int face = 0; face < scene->mMeshes[mesh]->mNumFaces; face++) {
 			aiFace facce = scene->mMeshes[mesh]->mFaces[face];
 			messh.indices_.push_back(facce.mIndices[0]);
 			messh.indices_.push_back(facce.mIndices[1]);
@@ -115,17 +147,17 @@ Model Model::ConvertAssimpToDarknec(aiScene* scene) {
 			for (int uv = 0; uv < uvCount; uv++) {
 				aiVector3D vector = scene->mMeshes[mesh]->mTextureCoords[0][uv];
 				messh.UVs_.push_back(vector.x);
-				messh.UVs_.push_back(vector.y);
+				messh.UVs_.push_back(1- vector.y);
 			}
 		}
-		
+
 		messh.materialIndex_ = scene->mMeshes[mesh]->mMaterialIndex;
 		model.meshes_.push_back(messh);
 	}
-	
+
 	model.numMaterials_ = scene->mNumMaterials;
 
-	for (int mat = 0; mat < scene->mNumMaterials; mat++) {
+	for (unsigned int mat = 0; mat < scene->mNumMaterials; mat++) {
 		Material darkMat;
 		aiMaterial* aiMat = scene->mMaterials[mat];
 

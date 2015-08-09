@@ -16,11 +16,23 @@ void ComponentPhysics::setInitialTransform(ComponentTransform* trans) {
 	tr.setOrigin(transform);
 	tr.setRotation(quat);
 	this->rigidBody_->getMotionState()->setWorldTransform(tr);
+
+
+
 }
 
+void ComponentPhysics::init() {
+	this->transform_.setup();
+}
 
-void ComponentPhysics::read(rapidxml::xml_node<>* node) {
-	this->transform_ = ComponentRequirement<ComponentTransform>(this->container_, std::string("transform"));
+bool ComponentPhysics::validate() {
+	return this->transform_.validate() && this->transform_->validate();
+}
+
+void ComponentPhysics::read(XMLNode node) {
+	this->transform_ = Darknec::ComponentRWUtils::readRequirement<ComponentTransform>(node, std::string("ComponentTransform"), std::string("transform"), this->container_);
+
+	Darknec::logger(this->transform_.name.c_str());
 
 	btVector3 velocity;
 
@@ -48,15 +60,15 @@ void ComponentPhysics::read(rapidxml::xml_node<>* node) {
 					float planeConstant = Darknec::ComponentRWUtils::readFloat(dataIter, "PlaneConstant");
 					btVector3 vectorbt = btVector3(v.x, v.y, v.z);
 
-
+					Darknec::logger("sss");
 					this->collisionShape_ = new btStaticPlaneShape(vectorbt, planeConstant);
 				}
 			}
 		}
 	}
 
-	glm::vec3 p = this->transform_->getPosition();
-	glm::fquat q = this->transform_->getOrientation();
+	glm::vec3 p = glm::vec3(0,0,0);
+	glm::fquat q = glm::fquat(0,0,0,1);
 
 	btVector3 fallInertia(0, 0, 0);
 	this->collisionShape_->calculateLocalInertia(1, fallInertia);
@@ -67,8 +79,16 @@ void ComponentPhysics::read(rapidxml::xml_node<>* node) {
 
 }
 
+bool b3 = true;
+
 void ComponentPhysics::update() {
+	if (b3) {
+		b3 = false;
+		setInitialTransform(this->transform_.getComponent());
+	}
+
 	if (!isStatic) {
+
 		btTransform trans;
 		rigidBody_->getMotionState()->getWorldTransform(trans);
 		btVector3 p = trans.getOrigin();

@@ -24,6 +24,8 @@ GameObject* GameObjectSystem::makeObject(std::string objectName) {
 
 			root_node = doc.first_node("GameObject"); //Root node
 
+			std::vector<Component*> loadedComponents;
+
 			for (rapidxml::xml_node<>* gameObjectIter = root_node->first_node(); gameObjectIter; gameObjectIter = gameObjectIter->next_sibling()) {
 
 				if (std::string(gameObjectIter->name()) == std::string("name")) {
@@ -44,9 +46,10 @@ GameObject* GameObjectSystem::makeObject(std::string objectName) {
 
 									std::string compName = std::string(charw);
 									compName = charw;
-
+									component->setName(compName);
 									component->read(componentIter);
-									object->registerComponent(component, compName.c_str());
+									
+									loadedComponents.push_back(component);
 								}
 								else {
 									Darknec::logger(Darknec::LogLevel::LOG_WARN, "Component of type '%s' requested by GameObject data file '%s' does not exist in component registry", s.c_str(), file);
@@ -57,6 +60,38 @@ GameObject* GameObjectSystem::makeObject(std::string objectName) {
 				}
 			}
 
+			std::vector<Component*> bufferComponents;
+
+			bufferComponents = loadedComponents;
+
+			bool correctOrder = false;
+
+			while (!correctOrder) {
+				std::vector<Component*> bufferNotValidComponents;
+				for (Component* comp : bufferComponents) {
+					if (comp->validate()) {
+						object->registerComponent(comp, comp->getName());
+					}
+					else {
+						bufferNotValidComponents.push_back(comp);
+					}
+				}
+				if (bufferNotValidComponents.empty()) {
+					correctOrder = true;
+				}
+				bufferComponents = bufferNotValidComponents;
+			}
+/*
+			for (Component* comp : loadedComponents) {
+				object->registerComponent(comp, comp->getName());
+			}*/
+
+			std::hash_map<std::string, Component*> hash = object->getComponentMap();
+
+			typedef std::hash_map<std::string, Component*>::iterator iter;
+			for (iter i = hash.begin(); i != hash.end(); i++) {
+				i->second->init();
+			}
 
 
 			return object;
@@ -66,7 +101,7 @@ GameObject* GameObjectSystem::makeObject(std::string objectName) {
 }
 
 void GameObjectSystem::registerObject(std::string objectName, std::string objectXMLFile) {
-	this->registry[objectName] = objectXMLFile;
+	this->registry[objectName] = Darknec::baseAssetPath + objectXMLFile;
 }
 
 void GameObjectSystem::removeObject(std::string objectName) {

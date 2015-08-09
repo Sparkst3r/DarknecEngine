@@ -2,37 +2,47 @@
 #define DARKNEC_COMPONENTRWUTILS_H
 
 #include <State.h>
+#include <system/ComponentSystem.h>
+
+
 
 namespace Darknec {
 	namespace ComponentRWUtils {
 
 
-		////template <typename ComponentType>
-		//void* readRequirement(rapidxml::xml_node<>* rootNode, std::string type, std::string ID, GameObject* container) {
-		//	//for (rapidxml::xml_node<>* dataIter = rootNode->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
-		//	//	if (std::string(dataIter->name()) == std::string("ComponentRequirement")) {
-		//	//		rapidxml::xml_attribute<>* attr1 = dataIter->first_attribute();
-		//	//		rapidxml::xml_attribute<>* attr2 = attr1->next_attribute();
-		//	//		if (std::string(attr1->name()) == std::string("id") && std::string(attr2->name()) == std::string("type")) { //TODO Make independant of attr order
-		//	//			std::string id = std::string(attr1->value());
-		//	//			if (id == ID) {
-		//	//				std::string type = std::string(attr2->value());
+		template <typename ComponentType>
+		ComponentRequirement<ComponentType> readRequirement(rapidxml::xml_node<>* rootNode, std::string type, std::string name, GameObject* container) {
+			for (rapidxml::xml_node<>* dataIter = rootNode->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
+				if (std::string(dataIter->name()) == std::string("ComponentRequirement")) {
+					rapidxml::xml_attribute<>* typeAttr = dataIter->first_attribute();
+					rapidxml::xml_attribute<>* nameAttr = typeAttr->next_attribute();
+					if (std::string(typeAttr->name()) == std::string("type") && std::string(nameAttr->name()) == std::string("name")) { //TODO Make independant of attr order
+						std::string nameVal = std::string(nameAttr->value());
+						if (nameVal == name) {
+							std::string typeVal = std::string(typeAttr->value());
 
-		//	//				ComponentRequirementFactory* factory = Darknec::componentFactory->getComponentRequirementFactoryHash()[type];
-		//	//				if (factory != NULL) {
-		//	//					return factory->createComponentRequirement(container, std::string(dataIter->value()));
-		//	//				}
-		//	//				else {
-		//	//					Darknec::logger(LogLevel::LOG_ERROR, "ComponentRequirement of type '%s' requested by Component does not exist in component registry", type.c_str());
-		//	//					return NULL;
-		//	//				}
-		//	//			}
-		//	//		}
-		//	//	}
-		//	//}
-		//	//Darknec::logger(LogLevel::LOG_WARN, "Could not find ComponentRequirement with id:", ID.c_str());
-		//	return NULL;
-		//}
+							ComponentRequirementFactory* factory = sys1->getComponentRequirementFactoryHash()[typeVal];
+							if (factory != NULL) {
+								void* req = factory->createComponentRequirement(container, std::string(dataIter->value()));
+								
+								ComponentRequirement<ComponentType>* reqCast = static_cast<ComponentRequirement<ComponentType>*>(req);
+								ComponentRequirement<ComponentType> reqObj = *reqCast;
+								delete reqCast;
+								return reqObj;
+							}
+							else {
+								Darknec::logger(LogLevel::LOG_ERROR, "ComponentRequirement of type '%s' requested by Component does not exist in component registry", typeVal.c_str());
+								
+								ComponentRequirement<ComponentType> reqBackup = ComponentRequirement<ComponentType>(container, std::string(dataIter->value()));
+								
+								return reqBackup;
+							}
+						}
+					}
+				}
+			}
+			Darknec::logger(LogLevel::LOG_WARN, "Could not find ComponentRequirement with id:", name.c_str());
+		}
 
 		std::string readString(rapidxml::xml_node<>* rootNode, const char* name);
 		float readFloat(rapidxml::xml_node<>* rootNode, const char* name);

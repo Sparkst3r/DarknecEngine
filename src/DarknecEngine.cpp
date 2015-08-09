@@ -9,6 +9,7 @@
 //For temp hack
 #include <system/ComponentSystem.h>
 #include <system/GameObjectSystem.h>
+#include <system/InputSystem.h>
 
 /**
 * @namespace Darknec
@@ -28,19 +29,6 @@ namespace Darknec {
 	* @date 15 July 2014
 	*/
 	namespace Detail {
-		
-		void squirrelLogger(HSQUIRRELVM v, const char* s, ...) {
-			va_list vl;
-			va_start(vl, s);
-			Darknec::logger.internalLog("Squirrel Script", LogLevel::LOG_LOG, s, vl);
-			va_end(vl);
-		}
-		void squirrelError(HSQUIRRELVM v, const char* s, ...) {
-			va_list vl;
-			va_start(vl, s);
-			Darknec::logger.internalLog("Squirrel Script", LogLevel::LOG_ERROR, s, vl);
-			va_end(vl);
-		}
 
 		/**
 		* loadSettings
@@ -51,29 +39,23 @@ namespace Darknec {
 		Darknec::Callback::Settings* loadSettings() {
 			using namespace rapidxml;
 
-			std::hash_map<std::string, SDL_WindowFlags> flagMap;
-			flagMap["WINDOW_SHOWN"] = SDL_WindowFlags::SDL_WINDOW_SHOWN;
-			flagMap["WINDOW_RESIZABLE"] = SDL_WindowFlags::SDL_WINDOW_RESIZABLE;
-
-			std::hash_map<std::string, SDL_GLattr> attrMap;
-			attrMap["GL_RED_SIZE"] = SDL_GLattr::SDL_GL_RED_SIZE;
-			attrMap["GL_GREEN_SIZE"] = SDL_GLattr::SDL_GL_GREEN_SIZE;
-			attrMap["GL_BLUE_SIZE"] = SDL_GLattr::SDL_GL_BLUE_SIZE;
-			attrMap["GL_ALPHA_SIZE"] = SDL_GLattr::SDL_GL_ALPHA_SIZE;
-			attrMap["GL_BUFFER_SIZE"] = SDL_GLattr::SDL_GL_BUFFER_SIZE;
-			attrMap["GL_DOUBLEBUFFER"] = SDL_GLattr::SDL_GL_DOUBLEBUFFER;
-			attrMap["GL_STENCIL_SIZE"] = SDL_GLattr::SDL_GL_STENCIL_SIZE;
-			attrMap["GL_CONTEXT_MAJOR"] = SDL_GLattr::SDL_GL_CONTEXT_MAJOR_VERSION;
-			attrMap["GL_CONTEXT_MINOR"] = SDL_GLattr::SDL_GL_CONTEXT_MINOR_VERSION;
-			attrMap["GL_DEPTH_SIZE"] = SDL_GLattr::SDL_GL_DEPTH_SIZE;
+			std::hash_map<std::string, long> glfwMap;
+			glfwMap["GL_RED_BITS"] = GLFW_RED_BITS;
+			glfwMap["GL_GREEN_BITS"] = GLFW_GREEN_BITS;
+			glfwMap["GL_BLUE_BITS"] = GLFW_BLUE_BITS;
+			glfwMap["GL_ALPHA_BITS"] = GLFW_ALPHA_BITS;
+			glfwMap["GL_DEPTH_BITS"] = GLFW_DEPTH_BITS;
+			glfwMap["GL_STENCIL_SIZE"] = GLFW_STENCIL_BITS;
+			glfwMap["GL_CONTEXT_MAJOR"] = GLFW_CONTEXT_VERSION_MAJOR;
+			glfwMap["GL_CONTEXT_MINOR"] = GLFW_CONTEXT_VERSION_MINOR;
+			glfwMap["WINDOW_SHOWN"] = GLFW_VISIBLE;
+			glfwMap["WINDOW_RESIZABLE"] = GLFW_RESIZABLE;
 
 			
 
 			std::ifstream settingsStream = std::ifstream("Settings.xml");
 			if (settingsStream.good()) {
 				Darknec::Callback::Settings* settings = new Darknec::Callback::Settings();
-				Uint32 windowFlags = SDL_WindowFlags::SDL_WINDOW_OPENGL;
-
 
 				xml_document<> doc;
 				xml_node<>* root_node;
@@ -100,7 +82,7 @@ namespace Darknec {
 							else if (std::string(windowIter->name()) == std::string("WindowHeight")) {
 								settings->windowHeight = atoi(std::string(windowIter->value()).c_str());
 							}
-							else if (std::string(windowIter->name()) == std::string("WindowX")) {
+							/*else if (std::string(windowIter->name()) == std::string("WindowX")) {
 								if (std::string(windowIter->value()) == std::string("CENTRE") || std::string(windowIter->value()) == std::string("CENTER")) {
 									settings->windowX = SDL_WINDOWPOS_CENTERED;
 								}
@@ -115,20 +97,15 @@ namespace Darknec {
 								else {
 									settings->windowY = atoi(std::string(windowIter->value()).c_str());
 								}
-							}
+							}*/
 							else if (std::string(windowIter->name()) == std::string("WindowAttribute")) {
 								xml_attribute<char>* attrName = windowIter->first_attribute();
 								std::string str = std::string(attrName->value());
 								if (!str.empty()) {
-									SDL_GLattr glAttr = attrMap[str];
+									long glAttr = glfwMap[str];
 									Darknec::logger("Settings Loader", LogLevel::LOG_LOG, "Window Attribute: '%s' set to %s", str.c_str(), std::string(windowIter->value()).c_str());
-									settings->attributes.push_back(Darknec::Callback::WindowAttribute(glAttr, atoi(std::string(windowIter->value()).c_str())));
+									settings->attributes.push_back(Darknec::Callback::WindowAttribute(glAttr, std::string(windowIter->value()).c_str()));
 								}
-							}
-							else if (std::string(windowIter->name()) == std::string("WindowFlag")) {
-								std::string str = std::string(windowIter->value());
-								Darknec::logger("Settings Loader", LogLevel::LOG_LOG, "Window Flag: %s.", str.c_str());
-								windowFlags |= flagMap[str];
 							}
 							else if (std::string(windowIter->name()) == std::string("BaseAssetPath")) {
 								std::string str = std::string(windowIter->value());
@@ -139,8 +116,6 @@ namespace Darknec {
 					}
 				}
 
-				settings->windowFlags = windowFlags;
-
 				return settings;
 			}
 			else {
@@ -150,6 +125,11 @@ namespace Darknec {
 			return NULL;
 		}
 
+		void error_callback(int error, const char* description) {
+			fputs(description, stderr);
+		}
+
+
 		/**
 		* InitEngine
 		* Setup engine libs and state
@@ -158,127 +138,120 @@ namespace Darknec {
 		* @return error state. Set to 0 if setup is successful
 		*/
 		int InitEngine() {
-			Darknec::squirrel = sq_open(1024);
-			Sqrat::DefaultVM::Set(Darknec::squirrel);
-			Darknec::darknec = Sqrat::Table(Darknec::squirrel);
-			sq_setprintfunc(Darknec::squirrel, &squirrelLogger, &squirrelError);
-			Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "Squirrel binding (Sqrat) initialised");
-
-
-
 			Darknec::Callback::Settings* settings = loadSettings();
 
 			///Setup SDL
-			if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Could not initialise SDL");
+			if (!glfwInit()) {
+				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Could not initialise GLFW");
 				return DarknecShutdown(1);
 			}
 			else {
-				Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "SDL Initialised");
-			}
-
-			///Setup SDL_Image
-			if (IMG_Init(IMG_INIT_PNG) == 0) {
-				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Could not initialise SDL_Image");
-				return DarknecShutdown(2);
-			}
-			else {
-				Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "SDL_Image extension initialised");
+				Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "GLFW Initialised");
 			}
 
 
 			///Set GL attributes
 			for (Darknec::Callback::WindowAttribute attr : settings->attributes) {
-				SDL_GL_SetAttribute(attr.attr, attr.value);
+				//GL version
+				if (attr.attr == GLFW_CONTEXT_VERSION_MAJOR ||
+					attr.attr == GLFW_CONTEXT_VERSION_MINOR) {
+					int version = atoi(attr.value.c_str());
+					glfwWindowHint(attr.attr, version);
+				}
+
+				//Bools
+				if (attr.attr == GLFW_RESIZABLE ||
+					attr.attr == GLFW_VISIBLE || 
+					attr.attr == GLFW_DECORATED ||
+					attr.attr == GLFW_AUTO_ICONIFY ||
+					attr.attr == GLFW_FLOATING ||
+					attr.attr == GLFW_STEREO ||
+					attr.attr == GLFW_SRGB_CAPABLE ||
+					attr.attr == GLFW_DOUBLEBUFFER ||
+					attr.attr == GLFW_OPENGL_FORWARD_COMPAT ||
+					attr.attr == GLFW_OPENGL_DEBUG_CONTEXT) {
+					bool boolean = attr.value == std::string("TRUE");
+					glfwWindowHint(attr.attr, boolean);
+				}
+
+				//Bit depth
+				if (attr.attr == GLFW_RED_BITS ||
+					attr.attr == GLFW_GREEN_BITS ||
+					attr.attr == GLFW_BLUE_BITS ||
+					attr.attr == GLFW_ALPHA_BITS ||
+					attr.attr == GLFW_DEPTH_BITS ||
+					attr.attr == GLFW_STENCIL_BITS) {
+					int bits = atoi(attr.value.c_str());
+					glfwWindowHint(attr.attr, bits);
+				}
+
+
 			}
 
-			//TODO Remove this when texture loading is fixed
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+			Darknec::WindowHeight = settings->windowHeight;
+			Darknec::WindowWidth = settings->windowWidth;
 
+			glfwSetErrorCallback(error_callback);
 			Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "GL window attributes loaded");
 
 			///Create window
-			window = SDL_CreateWindow(settings->windowName.c_str(), settings->windowX, settings->windowY, settings->windowWidth, settings->windowHeight, settings->windowFlags);
+			window = glfwCreateWindow(settings->windowWidth, settings->windowHeight, settings->windowName.c_str(), NULL, NULL);
 			if (!window) {
 				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Could not create window");
 				return DarknecShutdown(3);
 			}
 
-			///Attempt to set default window icon
-			if (settings->windowIcon != NULL) {
-				SDL_Surface* icon = IMG_Load("DarknecIcon.png");
-				if (icon) {
-					SDL_SetWindowIcon(window, icon);
-				}
-				else {
-					Darknec::logger("DarknecEngine", LogLevel::LOG_WARN, "Could not load default icon. Reverting to OS.");
-				}
-			}
-
-			Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Window created with flag : %i", settings->windowFlags);
+			//Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Window created with flag : %i", settings->windowFlags);
 
 			delete settings;
 
+			glfwSetKeyCallback(window, glfwInputKeyPressCallback);
+			glfwSetCursorPosCallback(window, glfwInputMouseMoveCallback);
+			
 			///Create GL context
-			glContext = SDL_GL_CreateContext(window);
+			glfwMakeContextCurrent(window);
+			glfwSwapInterval(1);
 
 
-			if (glContext == NULL) {
-				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Unable to create a GL context");
-				return DarknecShutdown(4);
+			glewExperimental = GL_TRUE;
+			int glewError = glewInit();
+			if (glewError != GLEW_OK) {
+				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Could not initialise GLEW. Error: %s", glewGetErrorString(glewError));
 			}
 			else {
-				glewExperimental = GL_TRUE;
-				int glewError = glewInit();
-				if (glewError != GLEW_OK) {
-					Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Could not initialise GLEW. Error: %s", glewGetErrorString(glewError));
-				}
-				else {
-					glGetIntegerv(GL_MAJOR_VERSION, &GLVersion_MAJOR);
-					glGetIntegerv(GL_MINOR_VERSION, &GLVersion_MINOR);
-
-					std::string contextString;
-					int contextAttribute;
-					SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextAttribute);
-					if (contextAttribute == SDL_GL_CONTEXT_PROFILE_COMPATIBILITY) {
-						contextString = "compatibility";
-					}
-					else {
-						contextString = "core";
-					}
+				glGetIntegerv(GL_MAJOR_VERSION, &GLVersion_MAJOR);
+				glGetIntegerv(GL_MINOR_VERSION, &GLVersion_MINOR);
 
 
+				std::string contextString;
+				int contextAttribute;
+				//SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextAttribute);
+				//if (contextAttribute == SDL_GL_CONTEXT_PROFILE_COMPATIBILITY) {
+				//	contextString = "compatibility";
+				//}
+				//else {
+				//	contextString = "core";
+				//}
+				int glslVersion = GLVersion_MAJOR * 100 + GLVersion_MINOR * 10;
 
-					int glslVersion = GLVersion_MAJOR * 100 + GLVersion_MINOR * 10;
-
-
-					if (glslVersion >= 330) {
-					}
-					else if (glslVersion >= 320) {
-						glslVersion = 150;
-					}
-					else if (glslVersion >= 310) {
-						glslVersion = 140;
-					}
-					else if (glslVersion >= 300) {
-						glslVersion = 130;
-					}
-					else if (glslVersion >= 210) {
-						glslVersion = 120;
-					}
-					else if (glslVersion >= 200) {
+				switch (glslVersion) {
+					case 200:
 						glslVersion = 110;
-					}
-					GLSLVersion = glslVersion;
-
-
-					Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "GL Context set up successfully");
-					Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "GPU vendor: %s", glGetString(GL_VENDOR));
-					Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Using OpenGL specification version: %s %s ", glGetString(GL_VERSION), contextString.c_str());
-					Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Using GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-
+					case 210:
+						glslVersion = 120;
+					case 300:
+						glslVersion = 130;
+					case 310:
+						glslVersion = 140;
+					case 320:
+						glslVersion = 150;
 				}
+
+				Darknec::GLSLVersion = glslVersion;
+				Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "GL Context set up successfully");
+				Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "GPU vendor: %s", glGetString(GL_VENDOR));
+				Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Using OpenGL specification version: %s %s ", glGetString(GL_VERSION), contextString.c_str());
+				Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Using GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 			}
 
 			RUNSTATE = PLAYING;
@@ -288,37 +261,17 @@ namespace Darknec {
 		///Internal function
 		//Enter game loop
 		void GameLoopBegin() {
-			SDL_Event currentEvent;
-
 			while (Darknec::RUNSTATE != Darknec::STOPPED && Darknec::RUNSTATE != Darknec::CRASHED) {
-				auto start = std::chrono::high_resolution_clock::now();
-
-				while (SDL_PollEvent(&currentEvent)) {
-					
-
-
-					if (currentEvent.type == SDL_QUIT) {
-						Darknec::RUNSTATE = Darknec::STOPPED;
-
-					}
-
-					if (Darknec::Callback::getEventCallback() != NULL) {
-						Darknec::Callback::getEventCallback()(currentEvent);
-					}
-
-
-
-
-					if (currentEvent.type == SDL_WINDOWEVENT && currentEvent.window.event == SDL_WINDOWEVENT_RESIZED) {
-						if (Darknec::Callback::getResizeCallback() != NULL) {
-							Darknec::Callback::getResizeCallback()(currentEvent);
-						}
-					}
+				glfwPollEvents();
+				if (glfwWindowShouldClose(Darknec::Detail::window)) {
+					Darknec::RUNSTATE = Darknec::STOPPED;
 				}
 
-				if (Darknec::Callback::getLogicCallback() != NULL) {
-					Darknec::Callback::getLogicCallback()();
-				}
+
+				sys4->pushUpdate();
+				//if (Darknec::Callback::getLogicCallback() != NULL) {
+				//	Darknec::Callback::getLogicCallback()();
+				//}
 
 
 				if (Darknec::Callback::getRenderCallback() != NULL) {
@@ -328,16 +281,7 @@ namespace Darknec {
 					Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Illegal State: NULL render method is not supported. Define a render method");
 					DarknecShutdown(6);
 				}
-
-				long long microsThisFrame = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count();
-				if (microsThisFrame > 0) { //This should always be true, unless you play on a super computer.
-					Darknec::RenderFPS = 1000000 / microsThisFrame; /* Microseconds to frames per second */
-				}
-				else {
-					Darknec::RenderFPS = 1000;
-				}
-				
-
+				glfwSwapBuffers(window);
 			}
 		}
 	}
@@ -380,7 +324,7 @@ namespace Darknec {
 		Darknec::logger("DarknecEngine", LogLevel::LOG_SECTION, "==========-START GAME-==========");
 		if (Darknec::Callback::getInitCallback() != NULL) {
 			Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "Running userdef init");
-			Darknec::Callback::getInitCallback()(argc, argv, Darknec::Detail::window, Darknec::Detail::glContext);
+			Darknec::Callback::getInitCallback()(argc, argv, Darknec::Detail::window);
 		}
 		else {
 			Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Illegal State: NULL init method is not supported. Define an init method");
@@ -413,22 +357,10 @@ namespace Darknec {
 			}
 		}
 
-		if (Darknec::Detail::glContext != NULL) {
-			SDL_GL_DeleteContext(Darknec::Detail::glContext);
-		}
-
-		if (Darknec::Detail::window != NULL) {
-			SDL_DestroyWindow(Darknec::Detail::window);
-		}
-
-		//SDL_IMG was initialised during setup and can be shutdown
-		if (Darknec::Detail::SDLIMGOK) {
-			IMG_Quit();
-		}
 
 		//SDL was initialised during setup and can be shutdown
 		if (Darknec::Detail::SDLOK) {
-			SDL_Quit();
+			glfwTerminate();
 		}
 
 		//sq_close(Darknec::squirrel);

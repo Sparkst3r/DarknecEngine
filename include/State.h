@@ -27,11 +27,11 @@ namespace Darknec {
 		/**
 		* Internal window handle.
 		*/
-		extern SDL_Window* window;
-		/**
-		* Internal context handle.
-		*/
-		extern SDL_GLContext glContext;
+		extern GLFWwindow* window;
+		///**
+		//* Internal context handle.
+		//*/
+		//extern SDL_GLContext glContext;
 
 		/**
 		* Set to true when SDL has initialised correctly.
@@ -69,6 +69,9 @@ namespace Darknec {
 	*/
 	extern int GLVersion_MINOR;
 
+	extern int WindowWidth;
+	extern int WindowHeight;
+
 	/**
 	* GLSL version.
 	*/
@@ -83,12 +86,11 @@ namespace Darknec {
 		CRASHED,
 	};
 
+
 	extern int RenderFPS;
 
 	extern LoggingManager logger;
 	extern RunState RUNSTATE;
-	extern HSQUIRRELVM squirrel;
-	extern Sqrat::Table darknec;
 	extern std::string baseAssetPath;
 }
 

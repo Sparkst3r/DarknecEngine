@@ -32,12 +32,6 @@
     <Filter Include="src\render\shader">
       <UniqueIdentifier>{2e505193-19e4-4186-920e-e6e36eda0c3d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\render\gui">
-      <UniqueIdentifier>{f668b999-15f3-41fa-af22-af1a8003b824}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\render\gui">
-      <UniqueIdentifier>{531427b5-802d-4af1-a24f-c4dcec68bfe5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\component">
       <UniqueIdentifier>{ed3f1498-59a1-4e24-a9f3-945d3e95d48c}</UniqueIdentifier>
     </Filter>
@@ -52,6 +46,9 @@
     </Filter>
     <Filter Include="extern\rapidXML">
       <UniqueIdentifier>{3da9bf45-d2c8-4127-b39d-89d638669e6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\event">
+      <UniqueIdentifier>{3786a46c-35c7-4411-b41a-5778ff887e2f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -76,9 +73,6 @@
     <ClInclude Include="include\object\GameObject.h">
       <Filter>include\object</Filter>
     </ClInclude>
-    <ClInclude Include="include\object\Mesh.h">
-      <Filter>include\object</Filter>
-    </ClInclude>
     <ClInclude Include="include\object\Model.h">
       <Filter>include\object</Filter>
     </ClInclude>
@@ -88,13 +82,7 @@
     <ClInclude Include="include\physics\BulletTypeDef.h">
       <Filter>include\physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\render\FontRenderer.h">
-      <Filter>include\render</Filter>
-    </ClInclude>
     <ClInclude Include="include\render\GLTypeDef.h">
-      <Filter>include\render</Filter>
-    </ClInclude>
-    <ClInclude Include="include\render\Material.h">
       <Filter>include\render</Filter>
     </ClInclude>
     <ClInclude Include="include\system\ComponentSystem.h">
@@ -145,6 +133,18 @@
     <ClInclude Include="include\system\ShaderSystem.h">
       <Filter>include\system</Filter>
     </ClInclude>
+    <ClInclude Include="include\render\Renderer.h">
+      <Filter>include\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\RendererForwardPhong.h">
+      <Filter>include\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\InputSystem.h">
+      <Filter>include\system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\Texture.h">
+      <Filter>include\render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\component\ComponentCamera.cpp">
@@ -165,9 +165,6 @@
     <ClCompile Include="src\object\GameObject.cpp">
       <Filter>src\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\object\Mesh.cpp">
-      <Filter>src\object</Filter>
-    </ClCompile>
     <ClCompile Include="src\object\World.cpp">
       <Filter>src\object</Filter>
     </ClCompile>
@@ -176,9 +173,6 @@
     </ClCompile>
     <ClCompile Include="src\system\GameObjectSystem.cpp">
       <Filter>src\system</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\FontRenderer.cpp">
-      <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="src\Darknec_Callbacks.cpp">
       <Filter>src</Filter>
@@ -206,6 +200,21 @@
     </ClCompile>
     <ClCompile Include="src\system\ShaderSystem.cpp">
       <Filter>src\system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\RendererForwardPhong.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="include\component\ComponentInput.h">
+      <Filter>include\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentInput.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\InputSystem.cpp">
+      <Filter>src\system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Texture.cpp">
+      <Filter>src\render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

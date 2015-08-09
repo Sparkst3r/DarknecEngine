@@ -41,9 +41,12 @@ public:
 	ComponentSimpleText(GameObject* container);
 
 	virtual void update();
-	virtual void read(rapidxml::xml_node<>* node);
+	virtual void read(XMLNode node);
+	virtual void init();
 
-	virtual rapidxml::xml_node<>* write(rapidxml::xml_node<>*);
+	virtual bool validate();
+
+	virtual XMLNode write(XMLNode node);
 
 
 	FontAtlas generateAtlas();

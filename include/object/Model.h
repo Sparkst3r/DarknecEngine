@@ -1,28 +1,43 @@
 #ifndef DARKNEC_MODEL_H
+#define DARKNEC_MODEL_H
 
 #include <Core.h>
 #include <assimp/scene.h>
+#include <render/Texture.h>
 
-class Messh {
+class Mesh {
 public:
-	Messh();
+	Mesh();
+
+	GLuint vao_;
+	GLuint vboVertices_;
+	GLuint vboNormals_;
+	GLuint vboTangents_;
+	GLuint vboUVs_;
+	
+	GLuint ibo_;
 
 	std::vector<float>          vertices_;
 	std::vector<float>          normals_;
+	std::vector<float>          tangents_;
 	std::vector<float>          UVs_;
 	std::vector<unsigned int>   indices_;
 
 
 	int numVertices_;
 	int numNormals_;
+	int numTangents_;
 	int numUVs_;
 	int numIndices_;
 
 
 	bool hasNormals_;
+	bool hasTangents_;
 	bool hasUVS_;
 
 	int materialIndex_;
+
+	void setupGLBuffers();
 
 };
 
@@ -84,19 +99,19 @@ public:
 
 	std::string getName();
 
-	bool get(MATERIALDATA dataKey, std::string& textureRef);
+	bool get(MATERIALDATA dataKey, Texture& texture);
 	bool get(MATERIALDATA dataKey, glm::vec3& colourRef);
 	bool get(MATERIALDATA dataKey, float& scalarRef);
 
-	bool set(MATERIALDATA dataKey, std::string textureRef);
+	bool set(MATERIALDATA dataKey, Texture textureRef);
 	bool set(MATERIALDATA dataKey, glm::vec3 colourRef);
 	bool set(MATERIALDATA dataKey, float scalarRef);
 
-	std::hash_map<int, std::string> textures_;
+	std::hash_map<MATERIALDATA, Texture> textures_;
 
-	std::hash_map<int, glm::vec3> colours_;
+	std::hash_map<MATERIALDATA, glm::vec3> colours_;
 
-	std::hash_map<int, float> colourScalars_;
+	std::hash_map<MATERIALDATA, float> colourScalars_;
 
 	std::string name_;
 
@@ -107,7 +122,7 @@ public:
 
 	Model();
 
-	std::vector<Messh> meshes_;
+	std::vector<Mesh> meshes_;
 	int numMeshes_;
 
 	std::vector<Material> materials_;

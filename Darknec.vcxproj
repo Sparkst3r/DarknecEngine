@@ -59,7 +59,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include\;extern\;..\boost\include\;..\SDL\include\;..\GLEW\include\;..\GLM\include\;..\SDL2_image\src;..\SDL2_TTF\include;..\Lua\include;..\LuaBind\include;..\Soil\;..\Bullet\src;..\Freetype\include;..\Visual Leak Detector\include;..\Squirrel\include;..\AssImp\include;$(IncludePath)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include\;extern\;..\stb\include\;..\boost\include\;..\GLFW\include\;..\GLEW\include\;..\GLM\include\;..\SDL2_image\src;..\SDL2_TTF\include;..\Lua\include;..\LuaBind\include;..\Soil\;..\Bullet\src;..\Freetype\include;..\Visual Leak Detector\include;..\AssImp\include;$(IncludePath)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ShowIncludes>false</ShowIncludes>
@@ -71,8 +71,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;soil.lib;assimp.lib;lua.lib;LuaBind.lib;Squirrel.lib;vld.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\SDL\lib\x86;..\SDL2_image\lib\Debug;..\GLEW\lib;..\Lua\lib;..\SOIL\;..\boost\lib\;..\AssImp\lib\$(Configuration);..\Visual Leak Detector\lib\Win32\;..\LuaBind\lib\Debug\;..\Squirrel\lib\Debug\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;stb.lib;SDL2Main.lib;glfw.lib;glew32.lib;soil.lib;assimp.lib;lua.lib;LuaBind.lib;Squirrel.lib;vld.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\SDL\lib\x86;..\SDL2_image\lib\Debug;..\stb\Debug\lib;..\GLFW\Debug\lib;..\GLEW\lib;..\Lua\lib;..\SOIL\;..\boost\lib\;..\AssImp\lib\$(Configuration);..\Visual Leak Detector\lib\Win32\;..\LuaBind\lib\Debug\;..\Squirrel\lib\Debug\</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -118,22 +118,25 @@
     <ClInclude Include="include\Darknec_Callbacks.h" />
     <ClInclude Include="include\LoggingManager.h" />
     <ClInclude Include="include\object\GameObject.h" />
-    <ClInclude Include="include\object\Mesh.h" />
     <ClInclude Include="include\object\Model.h" />
     <ClInclude Include="include\object\CObjLoader.h" />
     <ClInclude Include="include\object\World.h" />
     <ClInclude Include="include\physics\BulletTypeDef.h" />
-    <ClInclude Include="include\render\FontRenderer.h" />
+    <ClInclude Include="include\render\RendererForwardPhong.h" />
     <ClInclude Include="include\render\GLTypeDef.h" />
-    <ClInclude Include="include\render\Material.h" />
+    <ClInclude Include="include\render\Renderer.h" />
     <ClInclude Include="include\render\shader\Shader.h" />
+    <ClInclude Include="include\render\Texture.h" />
     <ClInclude Include="include\State.h" />
     <ClInclude Include="include\system\ComponentSystem.h" />
     <ClInclude Include="include\system\GameObjectSystem.h" />
+    <ClInclude Include="include\system\InputSystem.h" />
     <ClInclude Include="include\system\ShaderSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\component\ComponentInput.h" />
     <ClCompile Include="src\component\ComponentCamera.cpp" />
+    <ClCompile Include="src\component\ComponentInput.cpp" />
     <ClCompile Include="src\component\ComponentMesh.cpp" />
     <ClCompile Include="src\component\ComponentPhysics.cpp" />
     <ClCompile Include="src\component\ComponentRWUtils.cpp" />
@@ -143,15 +146,16 @@
     <ClCompile Include="src\Darknec_Callbacks.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
     <ClCompile Include="src\object\GameObject.cpp" />
-    <ClCompile Include="src\object\Mesh.cpp" />
     <ClCompile Include="src\object\CObjLoader.cpp" />
     <ClCompile Include="src\object\Model.cpp" />
     <ClCompile Include="src\object\World.cpp" />
-    <ClCompile Include="src\render\FontRenderer.cpp" />
+    <ClCompile Include="src\render\RendererForwardPhong.cpp" />
     <ClCompile Include="src\render\shader\Shader.cpp" />
+    <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\system\ComponentSystem.cpp" />
     <ClCompile Include="src\system\GameObjectSystem.cpp" />
+    <ClCompile Include="src\system\InputSystem.cpp" />
     <ClCompile Include="src\system\ShaderSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

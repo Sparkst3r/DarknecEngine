@@ -1,5 +1,6 @@
 #include <object/World.h>
 #include <component/ComponentSimpleText.h>
+#include <system/GameObjectSystem.h>
 
 World::World() {
 	broadphase = new btDbvtBroadphase();
@@ -19,29 +20,27 @@ World::~World() {
 	delete broadphase;
 }
 
-void World::spawnObject(GameObject* object, glm::vec3 coordinates, std::string positionID, std::string physicsID) {
+GameObject* World::getObject(std::string name) {
+	return this->gameObjects[name];
+}
 
-	if (object->hasComponent(physicsID)) {
-		ComponentPhysics* phys = object->getCastComponent<ComponentPhysics>(physicsID);
+void World::spawnObject(std::string type, std::string id) {
+	GameObject* object = sys2->makeObject(type);
+
+	if (object->hasComponent(std::string("physics"))) {
+		ComponentPhysics* phys = object->getCastComponent<ComponentPhysics>(std::string("physics"));
 		if (phys != NULL) {
 			physicsWorld->addRigidBody(phys->rigidBody_);
 		}
 	}
-
-
-	gameObjects.push_back(object);
+	gameObjects[id] = object;
 }
-
-void World::spawnObject(GameObject* object, glm::vec3 coordinates) {
-	gameObjects.push_back(object);
-}
-
 
 
 void World::renderAllObjects() {
 
-	for (GameObject* object : gameObjects) {
-
+	for (std::pair<std::string, GameObject*> obj : this->gameObjects) {
+		GameObject* object = obj.second;
 		if (object->hasComponent("mesh")) {
 			ComponentMesh* mesh = object->getCastComponent<ComponentMesh>("mesh");
 			mesh->update();
@@ -59,7 +58,8 @@ void World::stepPhysicsWorld(btScalar timeStep, int maxSubSteps) {
 	this->physicsWorld->stepSimulation(timeStep, maxSubSteps);
 
 
-	for (GameObject* object : gameObjects) {
+	for (std::pair<std::string, GameObject*> obj : this->gameObjects) {
+		GameObject* object = obj.second;
 		if (object->hasComponent(std::string("physics"))) {
 			ComponentPhysics* phys = object->getCastComponent<ComponentPhysics>(std::string("physics"));
 			phys->update();

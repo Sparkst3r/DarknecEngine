@@ -5,7 +5,10 @@
 #include <component/Component.h>
 #include <component/ComponentTransform.h>
 #include <component/ComponentRWUtils.h>
-#include <object/Mesh.h>
+#include <object/CObjLoader.h>
+#include <render/Texture.h>
+
+#include <render/RendererForwardPhong.h>
 
 class ComponentMesh : public Component {
 public:
@@ -14,21 +17,35 @@ public:
 
 	ComponentMesh(GameObject* container);
 
-	virtual rapidxml::xml_node<>* write(rapidxml::xml_node<>* node);
-	virtual void read(rapidxml::xml_node<>* node);
+	/**
+	* init
+	*
+	* Run after all components are loaded and if validate() returns true
+	* ensuring all requirements exist and are init'd.
+	*/
+	virtual void init();
 	virtual void update();
+	virtual bool validate();
 
-	void renderObject();
-	void setShader(Shader* shader);
-	void setMesh(Mesh* model);
-	void setUBO(UBO matrices);
-	void setTransform(std::string str);
+	virtual XMLNode write(XMLNode node);
+	virtual void read(XMLNode node);
 
 private:
-	std::string trans;
+	ComponentRequirement<ComponentTransform> transform_;
 
-	Mesh* model_ = NULL;
-	Shader* shader_;
-	UBO matrices_;
+	Model model_;
+	std::string modelFile_;
+
+	std::vector<VAO> vaos_;
+	std::vector<VBO> vbosVertex_;
+	std::vector<VBO> vbosNormal_;
+	std::vector<VBO> vbosUV_;
+
+	std::vector<IBO> ibos_;
+
+	GLuint s;
+
+	Renderer* renderer = new RendererForwardPhong();
+
 };
 #endif // !DARKNEC_COMPONENTMESH_H

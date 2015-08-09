@@ -18,7 +18,7 @@ namespace Darknec {
 	*
 	*/
 	enum LogLevel {
-		LOG_LOG, ///Lowest level log. Use for indicating important changes in the game.
+		LOG_LOG, ///Lowest level log. Use for indicating general changes in the game.
 		LOG_INFO, ///Used for printing informative data out.
 		LOG_WARN, ///Print a warning message if something isn't as it should be but will not affect stability.
 		LOG_ERROR, ///Use if something is badly wrong and the program is likely to be unstable.

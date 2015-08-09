@@ -9,8 +9,6 @@
 #include <windows.h>
 #endif
 
-#include <State.h>
-
 
 
 /**

@@ -15,21 +15,21 @@ namespace Darknec {
 			return initCallback;
 		}
 
-		EventCallback eventCallback;
-		void RegisterEventCallback(EventCallback callback) {
-			eventCallback = callback;
-		}
-		EventCallback getEventCallback() {
-			return eventCallback;
-		}
+		//EventCallback eventCallback;
+		//void RegisterEventCallback(EventCallback callback) {
+		//	eventCallback = callback;
+		//}
+		//EventCallback getEventCallback() {
+		//	return eventCallback;
+		//}
 
-		ResizeCallback resizeCallback;
-		void RegisterResizeCallback(ResizeCallback callback) {
-			resizeCallback = callback;
-		}
-		ResizeCallback getResizeCallback() {
-			return resizeCallback;
-		}
+		//ResizeCallback resizeCallback;
+		//void RegisterResizeCallback(ResizeCallback callback) {
+		//	resizeCallback = callback;
+		//}
+		//ResizeCallback getResizeCallback() {
+		//	return resizeCallback;
+		//}
 
 		LogicCallback logicCallback;
 		void RegisterLogicCallback(LogicCallback callback) {

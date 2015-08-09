@@ -62,7 +62,7 @@ public:
 	std::string getName() const;
 
 	std::hash_map<std::string, Component*> getComponentMap() const {
-		return components;
+		return components_;
 	}
 
 
@@ -70,7 +70,7 @@ private:
 
 	std::string name;
 
-	std::hash_map<std::string, Component*> components;
+	std::hash_map<std::string, Component*> components_;
 
 };
 

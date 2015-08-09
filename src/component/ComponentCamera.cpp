@@ -1,7 +1,29 @@
 #include <component/ComponentCamera.h>
 
+/**
+* ComponentCamera
+*
+* Constructor
+*/
+ComponentCamera::ComponentCamera(GameObject* container) {
+	this->container_ = container;
+}
 
-void ComponentCamera::read(rapidxml::xml_node<>* node) {
+bool ComponentCamera::validate() {
+	return this->transform_.validate() && this->transform_->validate();
+}
+
+void ComponentCamera::init() {
+	this->transform_.setup();
+}
+
+/**
+* read
+*
+* Load component data from xml.
+* @param node root node of the component to read from.
+*/
+void ComponentCamera::read(XMLNode node) {
 	this->transform_ = ComponentRequirement<ComponentTransform>(this->container_, std::string("transform"));
 
 
@@ -21,9 +43,6 @@ void ComponentCamera::read(rapidxml::xml_node<>* node) {
 	this->distance_ =			Darknec::ComponentRWUtils::readFloat(node, "distance");
 }
 
-ComponentCamera::ComponentCamera(GameObject* container) {
-	this->container_ = container;
-}
 
 
 glm::mat4 ComponentCamera::generateProjMatrix() {

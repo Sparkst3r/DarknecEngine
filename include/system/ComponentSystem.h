@@ -30,7 +30,6 @@ public:
 		this->exists_ = true;
 		this->name = name;
 		this->container_ = container;
-		this->validate();
 	}
 
 	/**
@@ -53,16 +52,30 @@ public:
 		return NULL;
 	}
 
-	/**
-	* Call to re validate the requirement if the container changes its Component list.
-	* @return true if the requirement was still valid and no change was made
-	*/
 	bool validate() {
 		if (this->exists_) {
 			if (this->container_->hasComponent(name)) {
 				T* component = this->container_->getCastComponent<T>(name);
 				if (component != NULL) {
 					this->component_ = component;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	* Call to re validate the requirement if the container changes its Component list.
+	* @return true if the requirement was still valid and no change was made
+	*/
+	bool setup() {
+		if (this->exists_) {
+			if (this->container_->hasComponent(name)) {
+				T* component = this->container_->getCastComponent<T>(name);
+				if (component != NULL) {
+					this->component_ = component;
+
 					return true;
 				}
 				Darknec::logger(Darknec::LogLevel::LOG_ERROR, "Component found '%s' is of incorrect Component type", name.c_str());
@@ -76,8 +89,6 @@ public:
 		Darknec::logger(Darknec::LogLevel::LOG_ERROR, "ComponentRequirement not initialised correctly: Cannot validate.");
 		return false;
 	}
-
-
 
 	std::string name;
 private:

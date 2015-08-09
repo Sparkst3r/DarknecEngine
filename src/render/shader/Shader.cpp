@@ -5,10 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <SDL.h>
-
-
-Shader Shader::activeShader;
 
 /**
 * Shader
@@ -19,11 +15,6 @@ Shader Shader::activeShader;
 
 Shader::~Shader() {
 	//TODO fix destructor once stripping out user shader manipulation. Engine hasnt initialised when global variables are being created and causes premature destruction.
-}
-
-Shader Shader::getActiveShader() {
-
-	return Shader::activeShader;
 }
 
 void Shader::setID(GLint ID) {
@@ -62,7 +53,6 @@ bool Shader::isValid() {
 * Make shader active
 */
 void Shader::use() {
-	Shader::activeShader = *this;
 	glUseProgram(this->ID);
 }
 

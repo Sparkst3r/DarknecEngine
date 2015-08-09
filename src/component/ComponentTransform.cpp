@@ -4,12 +4,19 @@ ComponentTransform::ComponentTransform(GameObject* container) {
 	this->container_ = container;
 }
 
-void ComponentTransform::read(rapidxml::xml_node<>* node) {
+void ComponentTransform::read(XMLNode node) {
 	this->position_ = Darknec::ComponentRWUtils::readVector3(node, "position", "X", "Y", "Z");
 	this->orient_ = Darknec::ComponentRWUtils::readQuat(node, "orientation", "X", "Y", "Z", "W");
 	this->scale_ = Darknec::ComponentRWUtils::readVector3(node, "scale", "X", "Y", "Z");
 }
 
+void ComponentTransform::init() {
+
+}
+
+bool ComponentTransform::validate() {
+	return true;
+}
 
 glm::vec3 ComponentTransform::getPosition() const {
 	return this->position_;

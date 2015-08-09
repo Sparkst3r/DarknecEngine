@@ -3,6 +3,7 @@
 #include <component/ComponentCamera.h>
 #include <component/ComponentMesh.h>
 #include <component/ComponentPhysics.h>
+#include <component/ComponentInput.h>
 #include <component/ComponentSimpleText.h>
 
 ComponentSystem::ComponentSystem() {
@@ -12,6 +13,7 @@ ComponentSystem::ComponentSystem() {
 	this->registerComponent("ComponentMesh", new ComponentMesh::ComponentFactoryDefault(), new ComponentMesh::ComponentRequirementFactoryDefault());
 	this->registerComponent("ComponentPhysics", new ComponentPhysics::ComponentFactoryDefault(), new ComponentPhysics::ComponentRequirementFactoryDefault());
 	this->registerComponent("ComponentSimpleText", new ComponentSimpleText::ComponentFactoryDefault(), new ComponentSimpleText::ComponentRequirementFactoryDefault());
+	this->registerComponent("ComponentInput", new ComponentInput::ComponentFactoryDefault(), new ComponentInput::ComponentRequirementFactoryDefault());
 }
 
 ComponentSystem::~ComponentSystem() {

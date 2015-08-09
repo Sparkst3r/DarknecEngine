@@ -1,3 +1,5 @@
+#ifndef DARKNEC_CORE_H 
+#define DARKNEC_CORE_H
 ///Standard libraries
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,12 +17,11 @@
 
 
 
-///GL implementation
+///GLEW implementation
 #include <GL/glew.h>
 
-///SDL libraries
-#include <SDL.h>
-#include <SDL_Image.h>
+///GLFW libraries
+#include <GLFW/GLFW3.h>
 
 ///Third party libraries
 #include <glm/glm.hpp>
@@ -30,11 +31,20 @@
 #include <rapidXML/rapidXML.hpp>
 #include <luabind/lua_include.hpp>
 #include <luabind/luabind.hpp>
-#include <sqrat.h>
 
 //#include <vld.h>
 
 
 ///Typedefs
 #include <render/GLTypeDef.h>
+
+enum InputType {
+	KEYBOARD,
+	MOUSE,
+	JOYSTICK
+};
+
+
+#endif // !DARKNEC_CORE_H
+
 

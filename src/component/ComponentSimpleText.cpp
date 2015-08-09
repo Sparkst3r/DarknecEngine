@@ -14,12 +14,17 @@ ComponentSimpleText::ComponentSimpleText(GameObject* container) {
 
 }
 
+bool ComponentSimpleText::validate() {
+	return this->transform_.validate() && this->transform_->validate();
+}
+
 void ComponentSimpleText::bindFont(std::string file) {
 	if (FT_New_Face(this->freetype_, file.c_str(), 0, &this->fontface_)) {
 		Darknec::logger(Darknec::LogLevel::LOG_WARN, "Could not find font : %s", file.c_str());
 	}
 	else {
 		Darknec::logger(Darknec::LogLevel::LOG_WARN, "Found font : %s", file.c_str());
+		this->atlas_ = generateAtlas();
 	}
 }
 
@@ -334,12 +339,9 @@ void ComponentSimpleText::setText(std::string text) {
 
 
 
-	glDeleteTextures(1, &this->textTexture_);
 
-	glActiveTexture(GL_TEXTURE1);
-	glGenTextures(1, &this->textTexture_);
 
-	glBindTexture(GL_TEXTURE_2D, this->textTexture_);
+
 
 	for (const char* p = cText; *p; p++) {
 		Character c = a.characters_[*p];
@@ -351,6 +353,9 @@ void ComponentSimpleText::setText(std::string text) {
 	this->textWidth = textWidth;
 	this->textHeight = a.atlasHeight_ + 50; //Hack to account for super tall fonts
 
+	glDeleteTextures(1, &this->textTexture_);
+	glGenTextures(1, &this->textTexture_);
+	glBindTexture(GL_TEXTURE_2D, this->textTexture_);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->textWidth, this->textHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -361,8 +366,7 @@ void ComponentSimpleText::setText(std::string text) {
 	for (const char* p = cText; *p; p++) {
 		Character c = a.characters_[*p];
 
-		const int byteCount = c.width * c.height;
-		std::vector<unsigned char> bytes = std::vector<unsigned char>(byteCount);
+		std::vector<unsigned char> bytes = std::vector<unsigned char>(c.width * c.height);
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
 		glReadPixels(c.xTexOffset, 0, c.width, c.height, GL_ALPHA, GL_UNSIGNED_BYTE, &bytes[0]);
 
@@ -372,7 +376,7 @@ void ComponentSimpleText::setText(std::string text) {
 		xPos += c.width;
 	}
 
-	//glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -381,6 +385,9 @@ bool isBuffersCreated = false;
 
 void ComponentSimpleText::Render() {
 	sys3->useShader("Text");
+
+
+
 
 	if (!isBuffersCreated) {
 		isBuffersCreated = true;
@@ -419,36 +426,32 @@ void ComponentSimpleText::Render() {
 
 
 
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, this->textTexture_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ibo2_);
-	sys3->getShader("Text").setUniformInt("tex", 1);
+	sys3->getShader("Text").setUniformInt("tex", 3);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
 
 	//sys3->restorePrevious();
 }
 
 
-rapidxml::xml_node<>* ComponentSimpleText::write(rapidxml::xml_node<>* node) {
+XMLNode ComponentSimpleText::write(XMLNode node) {
 	return NULL;
 }
-void ComponentSimpleText::read(rapidxml::xml_node<>* node) {
+void ComponentSimpleText::read(XMLNode node) {
 	this->transform_ = ComponentRequirement<ComponentTransform>(this->container_, std::string(Darknec::ComponentRWUtils::readString(node, "ComponentRequirement")));
 }
 
-bool b = false;
+void ComponentSimpleText::init() {
+	this->transform_.setup();
+	bindFont(Darknec::baseAssetPath + "/fonts/Comic_book.ttf");
+}
 
 void ComponentSimpleText::update() {
-	if (!b) {
-
-		bindFont("assets/fonts/Comic_book.ttf");
-
-
-		this->atlas_ = generateAtlas();
-		b = true;
-	}
 
 
 	sys3->useShader("Text");
@@ -463,7 +466,6 @@ void ComponentSimpleText::update() {
 
 
 	this->Render();
-	sys3->restorePrevious();
 }
 
 void ComponentSimpleText::setShader(Shader shader) {
