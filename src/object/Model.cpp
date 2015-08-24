@@ -47,26 +47,23 @@ std::string Material::getName() {
 	return name_;
 }
 
-bool Material::get(MATERIALDATA dataKey, Texture& textureRef) {
+Texture Material::getTex(MATERIALDATA dataKey) {
 	if (dataKey >= MATERIALDATA::TEXTURE_DIFFUSE && dataKey <= MATERIALDATA::TEXTURE_PARALLAX) {
-		textureRef = this->textures_[dataKey];
-		return true;
+		return this->textures_[dataKey];
 	}
-	return false;
+	return Texture();
 }
-bool Material::get(MATERIALDATA dataKey, glm::vec3& colourRef) {
+glm::vec4 Material::getCol(MATERIALDATA dataKey) {
 	if (dataKey >= MATERIALDATA::COLOUR_AMBIENT && dataKey <= MATERIALDATA::COLOUR_TRANSPARANT) {
-		colourRef = this->colours_[dataKey];
-		return true;
+		return this->colours_[dataKey];
 	}
-	return false;
+	return glm::vec4();
 }
-bool Material::get(MATERIALDATA dataKey, float& scalarRef) {
+float Material::getScal(MATERIALDATA dataKey) {
 	if (dataKey >= MATERIALDATA::COLSCA_SHININESS && dataKey <= MATERIALDATA::COLSCA_SHININESS_STRENGTH) {
-		scalarRef = this->colourScalars_[dataKey];
-		return true;
+		return this->colourScalars_[dataKey];
 	}
-	return false;
+	return 0.0f;
 }
 
 
@@ -80,7 +77,7 @@ bool Material::set(MATERIALDATA dataKey, Texture textureRef) {
 	}
 	return false;
 }
-bool Material::set(MATERIALDATA dataKey, glm::vec3 colourRef) {
+bool Material::set(MATERIALDATA dataKey, glm::vec4 colourRef) {
 	if (dataKey >= MATERIALDATA::COLOUR_AMBIENT && dataKey <= MATERIALDATA::COLOUR_TRANSPARANT) {
 		this->colours_[dataKey] = colourRef;
 		return true;
@@ -99,8 +96,7 @@ bool Material::set(MATERIALDATA dataKey, float scalarRef) {
 Model::Model() {}
 
 
-Model Model::ConvertAssimpToDarknec(aiScene* scene) {
-	Model model;
+Model Model::ConvertAssimpToDarknec(Model model, aiScene* scene) {
 
 	model.numMeshes_ = scene->mNumMeshes;
 	for (unsigned int mesh = 0; mesh < scene->mNumMeshes; mesh++) {
@@ -151,35 +147,8 @@ Model Model::ConvertAssimpToDarknec(aiScene* scene) {
 			}
 		}
 
-		messh.materialIndex_ = scene->mMeshes[mesh]->mMaterialIndex;
 		model.meshes_.push_back(messh);
 	}
-
-	model.numMaterials_ = scene->mNumMaterials;
-
-	for (unsigned int mat = 0; mat < scene->mNumMaterials; mat++) {
-		Material darkMat;
-		aiMaterial* aiMat = scene->mMaterials[mat];
-
-
-		aiColor3D aiAmb;
-		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, aiAmb);
-		glm::vec3 darkAmb = glm::vec3(aiAmb.r, aiAmb.g, aiAmb.b);
-		darkMat.set(Material::MATERIALDATA::COLOUR_AMBIENT, darkAmb);
-
-		aiColor3D aiDif;
-		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, aiDif);
-		glm::vec3 darkDif = glm::vec3(aiDif.r, aiDif.g, aiDif.b);
-		darkMat.set(Material::MATERIALDATA::COLOUR_DIFFUSE, darkDif);
-
-		aiColor3D aiSpe;
-		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, aiSpe);
-		glm::vec3 darkSpe = glm::vec3(aiSpe.r, aiSpe.g, aiSpe.b);
-		darkMat.set(Material::MATERIALDATA::COLOUR_DIFFUSE, darkSpe);
-
-		model.materials_.push_back(darkMat);
-	}
-
 
 	return model;
 }

@@ -79,10 +79,11 @@ public:
 		this->name_ = name;
 	}
 
-	
+	const char* typeName_;
 protected:
 	GameObject* container_;
 	std::string name_;
+
 };
 
 #endif // !DARKNEC_COMPONENT_H

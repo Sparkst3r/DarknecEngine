@@ -8,7 +8,7 @@
 #include <object/CObjLoader.h>
 #include <render/Texture.h>
 
-#include <render/RendererForwardPhong.h>
+#include <render/RendererDeferredPhong.h>
 
 class ComponentMesh : public Component {
 public:
@@ -45,7 +45,9 @@ private:
 
 	GLuint s;
 
-	Renderer* renderer = new RendererForwardPhong();
+
 
 };
 #endif // !DARKNEC_COMPONENTMESH_H
+
+extern Renderer* renderer;

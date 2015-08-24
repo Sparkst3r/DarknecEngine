@@ -1,4 +1,5 @@
 #include <component/ComponentCamera.h>
+#include <system/ShaderSystem.h>
 
 /**
 * ComponentCamera
@@ -7,6 +8,7 @@
 */
 ComponentCamera::ComponentCamera(GameObject* container) {
 	this->container_ = container;
+	this->typeName_ = "ComponentCamera";
 }
 
 bool ComponentCamera::validate() {
@@ -15,6 +17,21 @@ bool ComponentCamera::validate() {
 
 void ComponentCamera::init() {
 	this->transform_.setup();
+
+	glGenBuffers(1, &globalMatrices_);
+	glBindBuffer(GL_UNIFORM_BUFFER, globalMatrices_);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, NULL, GL_STREAM_DRAW);
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, globalMatrices_, 0, sizeof(glm::mat4) * 2);
+}
+
+void ComponentCamera::resizeViewport(int width, int height) {
+	glBindBuffer(GL_UNIFORM_BUFFER, this->globalMatrices_);
+	this->setCaptureDimension(width, height);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(this->generateProjMatrix()));
+}
+
+void ComponentCamera::bindMatrixBuffers() {
+	glBindBuffer(GL_UNIFORM_BUFFER, globalMatrices_);
 }
 
 /**
@@ -43,11 +60,18 @@ void ComponentCamera::read(XMLNode node) {
 	this->distance_ =			Darknec::ComponentRWUtils::readFloat(node, "distance");
 }
 
+void ComponentCamera::update() {
+	this->bindMatrixBuffers();
+	glm::mat4 mat = this->generateViewMatrix();
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(mat));
+	glm::mat3 v_inv = glm::inverse(glm::mat3(mat));
+	sys3->getShader("Text").setUniformFloatMatrix3("inv", false, v_inv);
+}
 
 
 glm::mat4 ComponentCamera::generateProjMatrix() {
 	if (this->projectionType_ == ProjType::ORTHOGRAPHIC) {
-		return glm::ortho(0.0f, (float) width_, (float) height_, 0.0f, frustrumNearClip_, frustrumFarClip_);
+		return glm::ortho((float) -width_ / 2 * 1 / 10, (float) width_ / 2 * 1 / 10, (float) -height_ / 2 * 1 / 10, (float) height_ / 2 * 1 / 10, (float) frustrumNearClip_, (float) frustrumFarClip_);
 	}
 	else if (this->projectionType_ == ProjType::PERSPECTIVE) {
 		float aspect = (float) width_ / height_;

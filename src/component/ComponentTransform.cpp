@@ -2,6 +2,7 @@
 
 ComponentTransform::ComponentTransform(GameObject* container) {
 	this->container_ = container;
+	this->typeName_ = "ComponentTransform";
 }
 
 void ComponentTransform::read(XMLNode node) {

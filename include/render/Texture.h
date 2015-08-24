@@ -11,11 +11,12 @@ public:
 	Texture(std::string file);
 
 	void bind(GLuint texUnit);
+	void bindHidden();
 
 	virtual ~Texture();
-
-private:
 	GLuint glTexID_;
+private:
+
 
 };
 

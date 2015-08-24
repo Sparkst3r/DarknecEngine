@@ -1,5 +1,5 @@
-#ifndef DARKNEC_COMPONENTINPUT_H
-#define DARKNEC_COMPONENTINPUT_H
+#ifndef DARKNEC_COMPONENTSCRIPT_H
+#define DARKNEC_COMPONENTSCRIPT_H
 
 #include <State.h>
 #include <component/Component.h>
@@ -7,13 +7,13 @@
 #include <component/ComponentRWUtils.h>
 
 
-class ComponentInput : public Component {
+class ComponentScript : public Component {
 public:
 
-	DECL_COMPONENT_FACTORY(ComponentInput)
-	DECL_COMPONENTREQUIREMENT_FACTORY(ComponentInput)
+	DECL_COMPONENT_FACTORY(ComponentScript)
+	DECL_COMPONENTREQUIREMENT_FACTORY(ComponentScript)
 
-		ComponentInput(GameObject* container);
+	ComponentScript(GameObject* container);
 
 	/**
 	* init
@@ -58,10 +58,9 @@ public:
 		return NULL;
 	}
 
-	InputType type = InputType::KEYBOARD;
-
 
 private:
-	void OffsetCameraDebug(glm::vec3 offset);
+
+	std::string script_;
 };
-#endif // !DARKNEC_COMPONENTINPUT_H
+#endif // !DARKNEC_COMPONENTSCRIPT_H

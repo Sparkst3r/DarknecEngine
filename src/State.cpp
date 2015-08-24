@@ -30,6 +30,8 @@ namespace Darknec {
 		bool SDLIMGOK;
 	}
 
+
+
 	int GLVersion_MAJOR;
 	int GLVersion_MINOR;
 	int GLSLVersion;
@@ -38,6 +40,9 @@ namespace Darknec {
 	int WindowHeight;
 
 	int RenderFPS;
+	lua_State* LUA = luaL_newstate();
+
+	//LuaEngineInterface luaInterface = LuaEngineInterface();
 
 	RunState RUNSTATE = STOPPED;
 	LoggingManager logger = LoggingManager("DarknecLog.txt");

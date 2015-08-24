@@ -75,6 +75,7 @@ GameObject::~GameObject() {
 }
 
 Component* GameObject::getComponent(std::string ID) {
+	
 	if (components_[ID] != NULL) {
 		return components_[ID];
 	}

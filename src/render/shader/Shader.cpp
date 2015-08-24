@@ -457,7 +457,8 @@ void Shader::setUniformFloatVec3(const char* location, glm::vec3 value) {
 * @param value vector value
 */
 void Shader::setUniformFloatVec4(const char* location, glm::vec4 value) {
-	glUniform4fv(this->getUniform(location), 4, glm::value_ptr(value));
+	float r = 1.0f;
+	glUniform4f(this->getUniform(location), value.x, value.y, value.z, value.w);
 }
 
 //void setUniformIntVec2(const char* location, glm::vec2 value);

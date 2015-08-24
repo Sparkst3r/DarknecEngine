@@ -58,40 +58,36 @@ namespace Darknec {
 				//stream.write((const char*) &specularF[0], dataWidth * 3);*/
 			}
 
-			stream.write((const char*) &model.numMaterials_, dataWidth);
+			//stream.write((const char*) &model.numMaterials_, dataWidth);
 
-			const int procedeFlag = -1;
-			const int colourFlag = -2;
+			//const int procedeFlag = -1;
+			//const int colourFlag = -2;
 
-			for (Material mat : model.materials_) {
-				//If there are material colours. There should never not be though.
-				if (!mat.colours_.empty()) {
-					stream.write((const char*) &colourFlag, dataWidth);
+			//for (Material mat : model.materials_) {
+			//	//If there are material colours. There should never not be though.
+			//	if (!mat.colours_.empty()) {
+			//		stream.write((const char*) &colourFlag, dataWidth);
 
-					typedef std::hash_map<Material::MATERIALDATA, glm::vec3>::iterator ite;
-					for (ite iterator = mat.colours_.begin(); iterator != mat.colours_.end(); iterator++) {
-						int enumIndex = iterator->first;
-						glm::vec3 colour = iterator->second;
+			//		typedef std::hash_map<Material::MATERIALDATA, glm::vec4>::iterator ite;
+			//		for (ite iterator = mat.colours_.begin(); iterator != mat.colours_.end(); iterator++) {
+			//			int enumIndex = iterator->first;
+			//			glm::vec4 colour = iterator->second;
 
-						//Write index
-						stream.write((const char*) &enumIndex, dataWidth);
-						//Write colour floats
-						stream.write((const char*) &colour[0], dataWidth * 3);
-					}
+			//			//Write index
+			//			stream.write((const char*) &enumIndex, dataWidth);
+			//			//Write colour floats
+			//			stream.write((const char*) &colour[0], dataWidth * 3);
+			//		}
 
-					//Write procede flag
-					stream.write((const char*) &procedeFlag, dataWidth);
-				}
-				else {
-					Darknec::logger(LogLevel::LOG_ERROR, "COBJ file does not contain Material colour data! This is really bad.");
-					//Write procede flag
-					stream.write((const char*) &procedeFlag, dataWidth);
-				}
-
-
-
-
-			}
+			//		//Write procede flag
+			//		stream.write((const char*) &procedeFlag, dataWidth);
+			//	}
+			//	else {
+			//		Darknec::logger(LogLevel::LOG_ERROR, "COBJ file does not contain Material colour data! This is really bad.");
+			//		//Write procede flag
+			//		stream.write((const char*) &procedeFlag, dataWidth);
+			//	}
+			//}
 
 
 
@@ -100,10 +96,8 @@ namespace Darknec {
 		}
 
 
-		Model read(std::string filename) {
+		Model read(Model model, std::string filename) {
 			std::ifstream stream = std::ifstream(filename, std::ios::binary);
-
-			Model model = Model();
 			const auto dataWidth = sizeof(float); //Size of float
 
 			//int start = SDL_GetTicks();
@@ -156,6 +150,7 @@ namespace Darknec {
 					stream.read((char*) &messh.UVs_[0], uvCount * dataWidth);
 				}
 
+
 				//Read mesh material index
 				stream.read((char*) &messh.materialIndex_, dataWidth);
 
@@ -167,7 +162,7 @@ namespace Darknec {
 				model.meshes_.push_back(messh);
 			}
 
-			stream.read((char*) &model.numMaterials_, dataWidth);
+			/*stream.read((char*) &model.numMaterials_, dataWidth);
 
 			for (int matIndex = 0; matIndex < model.numMaterials_; matIndex++) {
 				Material mater;
@@ -179,13 +174,13 @@ namespace Darknec {
 						stream.read((char*) &currentIndex, dataWidth);
 						if (currentIndex != -1) {
 							int enumIndex = currentIndex;
-							glm::vec3 colour;
-							stream.read((char*) &colour[0], dataWidth * 3);
+							glm::vec4 colour;
+							stream.read((char*) &colour[0], dataWidth * 4);
 							mater.colours_[Material::MATERIALDATA(enumIndex)] = colour;
 						}
 					}
 				}
-			}
+			}*/
 
 
 

@@ -1,20 +1,9 @@
 #ifndef DARKNEC_INPUTSYSTEM_H 
 #define DARKNEC_INPUTSYSTEM_H
 #include <Core.h>
-#include <component/ComponentInput.h>
+#include <component/component.h>
 
 
-
-class InputReceiver {
-public:
-
-	InputReceiver(ComponentInput* comp, InputType type) {
-		_comp = comp;
-		_type = type;
-	}
-	ComponentInput* _comp;
-	InputType _type;
-};
 
 class InputSystem {
 public:
@@ -24,17 +13,22 @@ public:
 	
 	void mouseMoved(GLFWwindow* window, double x, double y);
 
-	void registerInputReceiver(ComponentInput* comp, InputType type);
+	void registerInputReceiver(Component* comp);
+
+	bool getIsPressed(int key);
+	bool getIsPressed(std::string key);
 
 	void pushUpdate();
 	std::hash_map<std::string, int> stringToKeyMap;
+	std::vector<std::string> keyToStringMap;
 
 	std::vector<bool> keysPressed;
 	int lastPressMode = GLFW_RELEASE;
-	bool canRetrigger = true;
 	int lastKey = GLFW_KEY_UNKNOWN;
+	std::string lastKeyStr = "UNKNOWN";
+	bool keyIsPressed= false;
 
-	std::vector<InputReceiver> inputReceivers;
+	std::vector<Component*> inputReceivers;
 
 	double mouse_X_;
 	double mouse_Y_;

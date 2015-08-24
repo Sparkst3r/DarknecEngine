@@ -101,6 +101,7 @@ GameObject* GameObjectSystem::makeObject(std::string objectName) {
 }
 
 void GameObjectSystem::registerObject(std::string objectName, std::string objectXMLFile) {
+	Darknec::logger(objectXMLFile.c_str());
 	this->registry[objectName] = Darknec::baseAssetPath + objectXMLFile;
 }
 

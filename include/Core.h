@@ -12,6 +12,7 @@
 #include <hash_map>
 #include <time.h>
 #include <chrono>
+#include <numeric>
 
 
 
@@ -31,6 +32,11 @@
 #include <rapidXML/rapidXML.hpp>
 #include <luabind/lua_include.hpp>
 #include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
+extern "C"
+{
+#include <lualib.h>
+}
 
 //#include <vld.h>
 

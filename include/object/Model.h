@@ -99,17 +99,17 @@ public:
 
 	std::string getName();
 
-	bool get(MATERIALDATA dataKey, Texture& texture);
-	bool get(MATERIALDATA dataKey, glm::vec3& colourRef);
-	bool get(MATERIALDATA dataKey, float& scalarRef);
+	Texture getTex(MATERIALDATA dataKey);
+	glm::vec4 getCol(MATERIALDATA dataKey);
+	float getScal(MATERIALDATA dataKey);
 
 	bool set(MATERIALDATA dataKey, Texture textureRef);
-	bool set(MATERIALDATA dataKey, glm::vec3 colourRef);
+	bool set(MATERIALDATA dataKey, glm::vec4 colourRef);
 	bool set(MATERIALDATA dataKey, float scalarRef);
 
 	std::hash_map<MATERIALDATA, Texture> textures_;
 
-	std::hash_map<MATERIALDATA, glm::vec3> colours_;
+	std::hash_map<MATERIALDATA, glm::vec4> colours_;
 
 	std::hash_map<MATERIALDATA, float> colourScalars_;
 
@@ -124,11 +124,13 @@ public:
 
 	std::vector<Mesh> meshes_;
 	int numMeshes_;
-
-	std::vector<Material> materials_;
 	int numMaterials_;
 
-	static Model ConvertAssimpToDarknec(aiScene* scene);
+	std::vector<Material> materials_;
+	std::hash_map<std::string, int> matLookup_;
+	std::vector<int> meshMats_;
+
+	static Model ConvertAssimpToDarknec(Model model, aiScene* scene);
 
 };
 

@@ -43,7 +43,7 @@ public:
 	* Called every tick. Order of invocation based on tick priority. Eg physics before rendering.
 	*
 	*/
-	virtual void update() {}
+	virtual void update();
 
 	/**
 	* validate
@@ -75,6 +75,9 @@ public:
 	glm::mat4 generateViewMatrix();
 	glm::mat4 generateProjMatrix();
 
+	void resizeViewport(int width, int height);
+	void bindMatrixBuffers();
+
 	float getDistance() const;
 	void setDistance(float distance);
 	void offsetDistance(float offsetDistance);
@@ -94,6 +97,9 @@ private:
 	ComponentRequirement<ComponentTransform> transform_;
 
 	ComponentCamera::ProjType projectionType_;
+
+	UBO globalMatrices_;
+
 	float FOV_;
 
 	int width_;

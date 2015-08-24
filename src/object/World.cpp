@@ -1,6 +1,7 @@
 #include <object/World.h>
 #include <component/ComponentSimpleText.h>
 #include <system/GameObjectSystem.h>
+#include <component/ComponentMesh.h>
 
 World::World() {
 	broadphase = new btDbvtBroadphase();

@@ -16,7 +16,7 @@ Texture::Texture(std::string file) {
 
 
 	if (data == NULL) {
-		Darknec::logger(Darknec::LOG_ERROR, "sdasd");
+		Darknec::logger(Darknec::LOG_ERROR, "File %s", file.c_str());
 	}
 	glGenTextures(1, &this->glTexID_);
 	glBindTexture(GL_TEXTURE_2D, glTexID_);
@@ -28,10 +28,15 @@ Texture::Texture(std::string file) {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	stbi_image_free(data);
+	Darknec::logger("%i", glTexID_);
 }
 
 void Texture::bind(GLuint texUnit) {
 	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, this->glTexID_);
+}
+
+void Texture::bindHidden() {
 	glBindTexture(GL_TEXTURE_2D, this->glTexID_);
 }
 

@@ -8,6 +8,7 @@
 
 ComponentMesh::ComponentMesh(GameObject* container) {
 	container_ = container;
+	this->typeName_ = "ComponentMesh";
 }
 
 XMLNode ComponentMesh::write(XMLNode node) {
@@ -15,18 +16,57 @@ XMLNode ComponentMesh::write(XMLNode node) {
 }
 void ComponentMesh::read(XMLNode node) {
 	this->transform_ = Darknec::ComponentRWUtils::readRequirement<ComponentTransform>(node, std::string("ComponentTransform"), std::string("transform"), this->container_);
-	std::string str = "";
 	for (rapidxml::xml_node<>* dataIter = node->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
-		if (std::string(dataIter->name()) == std::string("mesh")) {
-			str = Darknec::ComponentRWUtils::readString(dataIter, "geometry");
+		if (std::string(dataIter->name()) == std::string("material")) {
+			Material mat;
+
+			for (rapidxml::xml_node<>* dataIter2 = dataIter->first_node(); dataIter2; dataIter2 = dataIter2->next_sibling()) {
+				if (std::string(dataIter2->name()) == std::string("texture")) {
+					std::string type = dataIter2->first_attribute()->value();
+					if (type == std::string("DIFFUSE")) {
+						mat.set(Material::TEXTURE_DIFFUSE, Texture(Darknec::baseAssetPath + std::string(dataIter2->value())));
+					}
+				}
+				else if (std::string(dataIter2->name()) == std::string("colour")) {
+					std::string type = dataIter2->first_attribute()->value();
+					if (type == std::string("AMBIENT")) {
+						mat.set(Material::COLOUR_AMBIENT, Darknec::ComponentRWUtils::readVector4(dataIter2, "channel", "R", "G", "B", "A"));
+					}
+					else if (type == std::string("DIFFUSE")) {
+						mat.set(Material::COLOUR_DIFFUSE, Darknec::ComponentRWUtils::readVector4(dataIter2, "channel", "R", "G", "B", "A"));
+					}
+					else if (type == std::string("SPECULAR")) {
+						mat.set(Material::COLOUR_SPECULAR, Darknec::ComponentRWUtils::readVector4(dataIter2, "channel", "R", "G", "B", "A"));
+					}
+				}
+
+			}
+
+			std::string name = dataIter->first_attribute()->value();
+			this->model_.materials_.push_back(mat);
+			this->model_.matLookup_[name] = this->model_.materials_.size()-1;
 		}
 	}
+	
+	for (rapidxml::xml_node<>* dataIter = node->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
+		if (std::string(dataIter->name()) == std::string("mesh")) {
+			int id = atoi(dataIter->first_attribute()->value());
+			if (this->model_.meshMats_.size() < id + 1) {
+				this->model_.meshMats_.resize(id + 1);
+			}
+			this->model_.meshMats_[id] = this->model_.matLookup_[Darknec::ComponentRWUtils::readString(dataIter, "material")];
+		}
+	}
+	
+	std::string str = "";
+	str = Darknec::ComponentRWUtils::readString(node, "model");
+
 
 	if (!str.empty()) {
 		this->modelFile_ = std::string(Darknec::baseAssetPath + str);
 	}
 	else {
-		Darknec::logger("ComponentMesh", Darknec::LOG_WARN, "ComponentMesh '%s' in object '%s' has mesh with no geometry. Skipping", this->name_.c_str(), this->container_->getName().c_str());
+		Darknec::logger("ComponentMesh", Darknec::LOG_WARN, "ComponentMesh '%s' in object '%s' has no model. Skipping", this->name_.c_str(), this->container_->getName().c_str());
 	}
 	
 }
@@ -44,7 +84,7 @@ void ComponentMesh::init() {
 		aiScene* scene = NULL;
 
 		if (std::ifstream(this->modelFile_ + ".cobj").good()) {
-			this->model_ = Darknec::CObjLoader::read(std::string(this->modelFile_) + ".cobj");
+			this->model_ = Darknec::CObjLoader::read(model_, std::string(this->modelFile_) + ".cobj");
 			Darknec::logger("ComponentMesh", Darknec::LogLevel::LOG_LOG, "Loaded compiled object: %s", std::string(std::string(this->modelFile_) + ".cobj").c_str());
 		}
 		else if (std::ifstream(std::string(this->modelFile_)).good()) {
@@ -59,7 +99,7 @@ void ComponentMesh::init() {
 			Darknec::logger("ComponentMesh", Darknec::LogLevel::LOG_LOG, "Found object %s; loading", this->modelFile_.c_str());
 
 			
-			model_ = Model::ConvertAssimpToDarknec(scene);
+			this->model_ = Model::ConvertAssimpToDarknec(this->model_, scene);
 			Darknec::CObjLoader::write(std::ofstream(this->modelFile_ + ".cobj", std::ios::binary), this->model_);
 			Darknec::logger("ComponentMesh", Darknec::LogLevel::LOG_LOG, "Compiled %s", this->modelFile_.c_str());
 		}
@@ -71,7 +111,9 @@ void ComponentMesh::init() {
 		for (int mesh = 0; mesh < model_.meshes_.size(); mesh++) {
 			Mesh* currMesh = &model_.meshes_[mesh];
 			currMesh->setupGLBuffers();
-
+			//if (model_.meshMats_.size() > mesh) {
+				currMesh->materialIndex_ = model_.meshMats_[0];
+			//}
 		}
 	}
 	else {
@@ -93,4 +135,5 @@ void ComponentMesh::update() {
 	renderer->render(this->model_);
 }
 
+Renderer* renderer = new RendererDeferredPhong();
 

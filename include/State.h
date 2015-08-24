@@ -5,6 +5,7 @@
 
 #include <Darknec_Callbacks.h>
 #include <LoggingManager.h>
+#include <render/RendererForwardPhong.h>
 /**
 * Darknec
 * @brief Base namespace
@@ -72,6 +73,8 @@ namespace Darknec {
 	extern int WindowWidth;
 	extern int WindowHeight;
 
+
+
 	/**
 	* GLSL version.
 	*/
@@ -88,10 +91,17 @@ namespace Darknec {
 
 
 	extern int RenderFPS;
+	extern lua_State* LUA;
 
 	extern LoggingManager logger;
 	extern RunState RUNSTATE;
 	extern std::string baseAssetPath;
+
+
+
+
+	//
+	//extern LuaEngineInterface luaInterface;
 }
 
 #endif

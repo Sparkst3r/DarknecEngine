@@ -127,9 +127,6 @@
     <ClInclude Include="include\render\shader\Shader.h">
       <Filter>include\render\shader</Filter>
     </ClInclude>
-    <ClInclude Include="include\component\ComponentSimpleText.h">
-      <Filter>include\component</Filter>
-    </ClInclude>
     <ClInclude Include="include\system\ShaderSystem.h">
       <Filter>include\system</Filter>
     </ClInclude>
@@ -143,6 +140,15 @@
       <Filter>include\system</Filter>
     </ClInclude>
     <ClInclude Include="include\render\Texture.h">
+      <Filter>include\render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ScriptCpptoLUA.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\component\ComponentData.h">
+      <Filter>include\component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\render\RendererDeferredPhong.h">
       <Filter>include\render</Filter>
     </ClInclude>
   </ItemGroup>
@@ -195,25 +201,31 @@
     <ClCompile Include="src\render\shader\Shader.cpp">
       <Filter>src\render\shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\component\ComponentSimpleText.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
     <ClCompile Include="src\system\ShaderSystem.cpp">
       <Filter>src\system</Filter>
     </ClCompile>
     <ClCompile Include="src\render\RendererForwardPhong.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
-    <ClCompile Include="include\component\ComponentInput.h">
-      <Filter>include\component</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\ComponentInput.cpp">
-      <Filter>src\component</Filter>
-    </ClCompile>
     <ClCompile Include="src\system\InputSystem.cpp">
       <Filter>src\system</Filter>
     </ClCompile>
     <ClCompile Include="src\render\Texture.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScriptCppToLUA.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentData.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="include\component\ComponentScript.h">
+      <Filter>include\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\ComponentScript.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\RendererDeferredPhong.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
   </ItemGroup>

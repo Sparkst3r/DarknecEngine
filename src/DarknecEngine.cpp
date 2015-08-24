@@ -10,6 +10,7 @@
 #include <system/ComponentSystem.h>
 #include <system/GameObjectSystem.h>
 #include <system/InputSystem.h>
+#include <ScriptCppToLUA.h>
 
 /**
 * @namespace Darknec
@@ -128,8 +129,7 @@ namespace Darknec {
 		void error_callback(int error, const char* description) {
 			fputs(description, stderr);
 		}
-
-
+	
 		/**
 		* InitEngine
 		* Setup engine libs and state
@@ -139,6 +139,9 @@ namespace Darknec {
 		*/
 		int InitEngine() {
 			Darknec::Callback::Settings* settings = loadSettings();
+			// Connect LuaBind to this lua state
+			luabind::open(LUA);
+			luaL_openlibs(LUA);
 
 			///Setup SDL
 			if (!glfwInit()) {
@@ -253,6 +256,21 @@ namespace Darknec {
 				Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Using OpenGL specification version: %s %s ", glGetString(GL_VERSION), contextString.c_str());
 				Darknec::logger("DarknecEngine", LogLevel::LOG_INFO, "Using GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 			}
+
+
+
+			///Setup SDL
+			if (!glfwInit()) {
+				Darknec::logger("DarknecEngine", LogLevel::LOG_FATAL, "Could not initialise GLFW");
+				return DarknecShutdown(1);
+			}
+			else {
+				Darknec::logger("DarknecEngine", LogLevel::LOG_LOG, "GLFW Initialised");
+			}
+
+
+			
+			Darknec::doRegisterCppLUAFuncs();
 
 			RUNSTATE = PLAYING;
 			return 0;

@@ -3,8 +3,9 @@
 #include <component/ComponentCamera.h>
 #include <component/ComponentMesh.h>
 #include <component/ComponentPhysics.h>
-#include <component/ComponentInput.h>
-#include <component/ComponentSimpleText.h>
+#include <component/ComponentScript.h>
+//#include <component/ComponentSimpleText.h>
+#include <component/ComponentData.h>
 
 ComponentSystem::ComponentSystem() {
 	//Move this to a script when LUA is implemented.
@@ -12,8 +13,9 @@ ComponentSystem::ComponentSystem() {
 	this->registerComponent("ComponentCamera", new ComponentCamera::ComponentFactoryDefault(), new ComponentCamera::ComponentRequirementFactoryDefault());
 	this->registerComponent("ComponentMesh", new ComponentMesh::ComponentFactoryDefault(), new ComponentMesh::ComponentRequirementFactoryDefault());
 	this->registerComponent("ComponentPhysics", new ComponentPhysics::ComponentFactoryDefault(), new ComponentPhysics::ComponentRequirementFactoryDefault());
-	this->registerComponent("ComponentSimpleText", new ComponentSimpleText::ComponentFactoryDefault(), new ComponentSimpleText::ComponentRequirementFactoryDefault());
-	this->registerComponent("ComponentInput", new ComponentInput::ComponentFactoryDefault(), new ComponentInput::ComponentRequirementFactoryDefault());
+	//this->registerComponent("ComponentSimpleText", new ComponentSimpleText::ComponentFactoryDefault(), new ComponentSimpleText::ComponentRequirementFactoryDefault());
+	this->registerComponent("ComponentScript", new ComponentScript::ComponentFactoryDefault(), new ComponentScript::ComponentRequirementFactoryDefault());
+	this->registerComponent("ComponentData", new ComponentData::ComponentFactoryDefault(), new ComponentData::ComponentRequirementFactoryDefault());
 }
 
 ComponentSystem::~ComponentSystem() {

@@ -6,30 +6,30 @@ InputSystem::InputSystem() {
 	keysPressed.resize(GLFW_KEY_LAST);
 	std::fill(keysPressed.begin(), keysPressed.end(), false);
 
-	this->stringToKeyMap[std::string("SPACE")]			 = GLFW_KEY_SPACE;
-	this->stringToKeyMap[std::string("APOSTROPHE")]		 = GLFW_KEY_APOSTROPHE;
-	this->stringToKeyMap[std::string("COMMA")]			 = GLFW_KEY_COMMA;
-	this->stringToKeyMap[std::string("MINUS")]			 = GLFW_KEY_MINUS;
-	this->stringToKeyMap[std::string("PERIOD")]			 = GLFW_KEY_PERIOD;
-	this->stringToKeyMap[std::string("0")]				 = GLFW_KEY_0;
-	this->stringToKeyMap[std::string("1")]				 = GLFW_KEY_1;
-	this->stringToKeyMap[std::string("2")]				 = GLFW_KEY_2;
-	this->stringToKeyMap[std::string("3")]				 = GLFW_KEY_3;
-	this->stringToKeyMap[std::string("4")]				 = GLFW_KEY_4;
-	this->stringToKeyMap[std::string("5")]				 = GLFW_KEY_5;
-	this->stringToKeyMap[std::string("6")]				 = GLFW_KEY_6;
-	this->stringToKeyMap[std::string("7")]				 = GLFW_KEY_7;
+	this->stringToKeyMap[std::string("SPACE")] = GLFW_KEY_SPACE;
+	this->stringToKeyMap[std::string("APOSTROPHE")] = GLFW_KEY_APOSTROPHE;
+	this->stringToKeyMap[std::string("COMMA")] = GLFW_KEY_COMMA;
+	this->stringToKeyMap[std::string("MINUS")] = GLFW_KEY_MINUS;
+	this->stringToKeyMap[std::string("PERIOD")] = GLFW_KEY_PERIOD;
+	this->stringToKeyMap[std::string("0")] = GLFW_KEY_0;
+	this->stringToKeyMap[std::string("1")] = GLFW_KEY_1;
+	this->stringToKeyMap[std::string("2")] = GLFW_KEY_2;
+	this->stringToKeyMap[std::string("3")] = GLFW_KEY_3;
+	this->stringToKeyMap[std::string("4")] = GLFW_KEY_4;
+	this->stringToKeyMap[std::string("5")] = GLFW_KEY_5;
+	this->stringToKeyMap[std::string("6")] = GLFW_KEY_6;
+	this->stringToKeyMap[std::string("7")] = GLFW_KEY_7;
 	//#define GLFW_KEY_8                  56
 	//#define GLFW_KEY_9                  57
 	//#define GLFW_KEY_SEMICOLON          59  /* ; */
 	//#define GLFW_KEY_EQUAL              61  /* = */
-	this->stringToKeyMap[std::string("A")]				 = GLFW_KEY_A;
+	this->stringToKeyMap[std::string("A")] = GLFW_KEY_A;
 	//#define GLFW_KEY_B                  66
 	//#define GLFW_KEY_C                  67
-	this->stringToKeyMap[std::string("D")]				 = GLFW_KEY_D;
+	this->stringToKeyMap[std::string("D")] = GLFW_KEY_D;
 	//#define GLFW_KEY_E                  69
 	//#define GLFW_KEY_F                  70
-	//#define GLFW_KEY_G                  71
+	this->stringToKeyMap[std::string("G")] = GLFW_KEY_G;
 	//#define GLFW_KEY_H                  72
 	//#define GLFW_KEY_I                  73
 	//#define GLFW_KEY_J                  74
@@ -57,7 +57,7 @@ InputSystem::InputSystem() {
 	//#define GLFW_KEY_WORLD_2            162 /* non-US #2 */
 
 	//	/* Function keys */
-	//#define GLFW_KEY_ESCAPE             256
+	this->stringToKeyMap[std::string("ESC")] = GLFW_KEY_ESCAPE;
 	//#define GLFW_KEY_ENTER              257
 	//#define GLFW_KEY_TAB                258
 	//#define GLFW_KEY_BACKSPACE          259
@@ -118,7 +118,7 @@ InputSystem::InputSystem() {
 	//#define GLFW_KEY_KP_ADD             334
 	//#define GLFW_KEY_KP_ENTER           335
 	//#define GLFW_KEY_KP_EQUAL           336
-	//#define GLFW_KEY_LEFT_SHIFT         340
+	this->stringToKeyMap[std::string("LSHIFT")] = GLFW_KEY_LEFT_SHIFT;
 	//#define GLFW_KEY_LEFT_CONTROL       341
 	//#define GLFW_KEY_LEFT_ALT           342
 	//#define GLFW_KEY_LEFT_SUPER         343
@@ -128,23 +128,44 @@ InputSystem::InputSystem() {
 	//#define GLFW_KEY_RIGHT_SUPER        347
 	//#define GLFW_KEY_MENU               348
 	//#define GLFW_KEY_LAST               GLFW_KEY_MENU
+	keyToStringMap.resize(GLFW_KEY_LAST);
+	typedef std::hash_map<std::string, int>::iterator it_type;
+	for (it_type iterator = stringToKeyMap.begin(); iterator != stringToKeyMap.end(); iterator++) {
+		keyToStringMap[iterator->second] = iterator->first;
+	}
 }
 
-void InputSystem::registerInputReceiver(ComponentInput* comp, InputType type) {
-	this->inputReceivers.push_back(InputReceiver(comp, type));
+bool InputSystem::getIsPressed(int key) {
+	return this->keysPressed[key];
+}
+
+bool InputSystem::getIsPressed(std::string key) {
+	return this->keysPressed[this->stringToKeyMap[key]];
+}
+
+void InputSystem::registerInputReceiver(Component* comp) {
+	this->inputReceivers.push_back(comp);
 }
 
 void InputSystem::keyPressed(GLFWwindow* window, int key, int scancode, int action, int modifier) {
+	this->lastKeyStr = this->keyToStringMap[key];
 	this->lastPressMode = action;
 	this->keysPressed[key] = true;
 	if (action == GLFW_PRESS) {
 		this->keysPressed[key] = true;
-		canRetrigger = false;
 	}
 	else if (action == GLFW_RELEASE) {
 		this->keysPressed[key] = false;
-		canRetrigger = true;
 	}
+
+	if (std::find(this->keysPressed.begin(), this->keysPressed.end(), true) != this->keysPressed.end()) {
+		this->keyIsPressed = true;
+	}
+
+	if (std::find(this->keysPressed.begin(), this->keysPressed.end(), true) == this->keysPressed.end()) {
+		this->keyIsPressed = true;
+	}
+
 }
 
 void InputSystem::mouseMoved(GLFWwindow* window, double x, double y) {
@@ -153,8 +174,8 @@ void InputSystem::mouseMoved(GLFWwindow* window, double x, double y) {
 }
 
 void InputSystem::pushUpdate() {
-	for (InputReceiver rec : inputReceivers) {
-		rec._comp->update();
+	for (Component* rec : inputReceivers) {
+		rec->update();
 	}
 }
 

@@ -5,7 +5,7 @@
 #include <physics/BulletTypeDef.h>
 #include <object/GameObject.h>
 #include <component/ComponentPhysics.h>
-#include <component/ComponentMesh.h>
+
 
 class World {
 public:
@@ -31,6 +31,8 @@ private:
 	btSequentialImpulseConstraintSolver* solver;
 
 	std::hash_map<std::string, GameObject*> gameObjects;
+
+
 
 };
 
