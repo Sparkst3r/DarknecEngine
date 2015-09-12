@@ -27,7 +27,7 @@ public:
 	AttrID getAttribute(const char* attrName);
 	UnifID getUniform(const char* uniformName);
 
-	void bindFragmentOutput(const char* location);
+	void bindFragmentOutput(const char* name, int location);
 
 	
 

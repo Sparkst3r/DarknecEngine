@@ -8,8 +8,12 @@
 
 class RendererForwardPhong : public Renderer {
 public:
+	RendererForwardPhong();
 
+	void init();
 	void render(Model model);
+	void frameStepBefore();
+	void frameStepAfter();
 
 };
 

@@ -23,8 +23,6 @@ public:
 
 	void stepPhysicsWorld(btScalar timeStep, int maxSubSteps);
 
-
-private:
 	btBroadphaseInterface* broadphase;
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	btCollisionDispatcher* dispatcher;
@@ -32,6 +30,7 @@ private:
 
 	std::hash_map<std::string, GameObject*> gameObjects;
 
+	GameObject* currentCamera;
 
 
 };

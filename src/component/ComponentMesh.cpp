@@ -24,7 +24,17 @@ void ComponentMesh::read(XMLNode node) {
 				if (std::string(dataIter2->name()) == std::string("texture")) {
 					std::string type = dataIter2->first_attribute()->value();
 					if (type == std::string("DIFFUSE")) {
-						mat.set(Material::TEXTURE_DIFFUSE, Texture(Darknec::baseAssetPath + std::string(dataIter2->value())));
+						Texture tex(GL_TEXTURE_2D);
+						tex.setDims(Darknec::WindowWidth, Darknec::WindowHeight);
+						tex.setFormat(GL_RGBA, GL_RGBA);
+						tex.setValueType(GL_UNSIGNED_BYTE);
+						tex.setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+						tex.setParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+						tex.setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						tex.setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+						tex.setData(Darknec::baseAssetPath + std::string(dataIter2->value()));
+						tex.create();
+						mat.set(Material::TEXTURE_DIFFUSE, tex);
 					}
 				}
 				else if (std::string(dataIter2->name()) == std::string("colour")) {
@@ -50,7 +60,7 @@ void ComponentMesh::read(XMLNode node) {
 	
 	for (rapidxml::xml_node<>* dataIter = node->first_node(); dataIter; dataIter = dataIter->next_sibling()) {
 		if (std::string(dataIter->name()) == std::string("mesh")) {
-			int id = atoi(dataIter->first_attribute()->value());
+			unsigned int id = atoi(dataIter->first_attribute()->value());
 			if (this->model_.meshMats_.size() < id + 1) {
 				this->model_.meshMats_.resize(id + 1);
 			}
@@ -106,9 +116,9 @@ void ComponentMesh::init() {
 		else {
 			Darknec::logger("ComponentMesh", Darknec::LogLevel::LOG_ERROR, "Could not load object %s", this->modelFile_.c_str());
 		}
-		sys3->useShader("Phong");
+		/*sys3->useShader("Phong");*/
 
-		for (int mesh = 0; mesh < model_.meshes_.size(); mesh++) {
+		for (unsigned int mesh = 0; mesh < model_.meshes_.size(); mesh++) {
 			Mesh* currMesh = &model_.meshes_[mesh];
 			currMesh->setupGLBuffers();
 			//if (model_.meshMats_.size() > mesh) {
@@ -122,9 +132,6 @@ void ComponentMesh::init() {
 }
 
 void ComponentMesh::update() {
-	sys3->useShader("Text");
-
-
 	glm::mat4 matrix;
 	matrix = glm::scale(matrix, this->transform_->getScale());
 

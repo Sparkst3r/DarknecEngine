@@ -36,7 +36,7 @@ void Shader::reload() {
 		std::vector<std::string> stages = preprocess(buffer.str());
 
 		ID = createShader(stages, true);
-		this->bindFragmentOutput("colour");
+		//this->bindFragmentOutput("colour");
 
 		file.close();
 	}
@@ -60,8 +60,8 @@ void Shader::use() {
 * Bind variable as fragment data output of the shader
 * @param location name of variable to assign as fragment data output
 */
-void Shader::bindFragmentOutput(const char* location) {
-	glBindFragDataLocation(this->ID, 0, location);
+void Shader::bindFragmentOutput(const char* name, int location) {
+	glBindFragDataLocation(this->ID, location, name);
 }
 
 
@@ -84,7 +84,9 @@ Shader::Shader(std::string filename) {
 		std::vector<std::string> stages = preprocess(buffer.str());
 
 		ID = createShader(stages, false);
-		this->bindFragmentOutput("colour");
+		//this->bindFragmentOutput("zero", 0);
+		//this->bindFragmentOutput("one", 1);
+		//this->bindFragmentOutput("two", 2);
 
         file.close();
 	}

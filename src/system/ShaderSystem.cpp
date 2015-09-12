@@ -25,6 +25,7 @@ void ShaderSystem::restorePrevious() {
 }
 
 Shader ShaderSystem::getShader(std::string name) {
+	this->useShader(name);
 	return this->shaderMap[name];
 }
 

@@ -5,34 +5,66 @@
 #include <stb_image.h>
 #include <State.h>
 
-Texture::Texture() {
-	this->glTexID_ = -1;
+Texture::Texture() {}
+
+Texture::Texture(GLuint type) {
+	this->type_ = type;
+	this->glTexID_ = 0;
+	glGenTextures(1, &this->glTexID_);
+
 }
 
-Texture::Texture(std::string file) {
+void Texture::setData(std::string file) {
 	int width, height, numComponents;
 	unsigned char* data = stbi_load((file).c_str(), &width, &height, &numComponents, 4);
-
-
-
+	this->width_ = width;
+	this->height_ = height;
 	if (data == NULL) {
-		Darknec::logger(Darknec::LOG_ERROR, "File %s", file.c_str());
+		Darknec::logger(Darknec::LOG_WARN, "Texture file not found or could not be read. File path: %s", file.c_str());
 	}
-	glGenTextures(1, &this->glTexID_);
-	glBindTexture(GL_TEXTURE_2D, glTexID_);
+	this->data_ = data;
+}
+void Texture::setData(void* data) {
+	this->data_ = data;
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	stbi_image_free(data);
-	Darknec::logger("%i", glTexID_);
+void Texture::setDims(GLuint width, GLuint height) {
+	this->width_ = width;
+	this->height_ = height;
+}
+void Texture::setValueType(GLuint type) {
+	this->valueType_ = type;
+}
+
+void Texture::setFormat(GLuint texelformat, GLuint internalFormat) {
+	this->intFormat_ = internalFormat;
+	this->texFormat_ = texelformat;
+}
+
+void Texture::setParameter(GLuint texParam, GLuint value) {
+	this->bindHidden();
+	glTexParameteri(this->type_, texParam, value);
+}
+
+void Texture::create() {
+	glEnable(GL_TEXTURE_2D);
+	this->bindHidden();
+	glTexImage2D(this->type_, this->mipmapLevel_, this->intFormat_, this->width_, this->height_, 0, this->texFormat_, this->valueType_, data_);
+}
+
+void Texture::destroy() {
+
+	if (this->data_ != NULL) {
+		delete[] this->data_;
+	}
+	
+	glDeleteTextures(1, &this->glTexID_);
+	this->glTexID_ = 0;
 }
 
 void Texture::bind(GLuint texUnit) {
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + texUnit);
 	glBindTexture(GL_TEXTURE_2D, this->glTexID_);
 }
 
@@ -40,5 +72,7 @@ void Texture::bindHidden() {
 	glBindTexture(GL_TEXTURE_2D, this->glTexID_);
 }
 
-Texture::~Texture() {
+void Texture::bindToFrameBuffer(GLuint attachment, GLuint target, GLuint mipmapLevel) {
+	this->bindHidden();
+	glFramebufferTexture2D(target, attachment, this->type_, this->glTexID_, mipmapLevel);
 }

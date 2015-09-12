@@ -8,31 +8,35 @@
 
 class GBuffer {
 public:
-
-	enum GBUFFER_TEXTURE_TYPE {
-		GBUFFER_TEXTURE_TYPE_POSITION,
-		GBUFFER_TEXTURE_TYPE_DIFFUSE,
-		GBUFFER_TEXTURE_TYPE_NORMAL,
-		GBUFFER_TEXTURE_TYPE_TEXCOORD,
-		GBUFFER_NUM_TEXTURES
-	};
-
 	GBuffer();
-
-	~GBuffer();
-
-private:
-
 	GLuint m_fbo;
-	Texture m_textures[GBUFFER_NUM_TEXTURES];
-	Texture m_depthTexture;
+	GLuint m_rbo;
+	void destroy();
+
+
+
+	std::vector<Texture> textures = std::vector<Texture>(4);
 };
 
 class RendererDeferredPhong : public Renderer {
 public:
+	RendererDeferredPhong();
+	void frameStepBefore();
+	void frameStepAfter();
+	GBuffer* buffer = NULL;
 
 	void render(Model model);
+	void geometryPass(GBuffer*, Model);
+	
 
+
+	void init();
+
+
+
+	GLuint VBO;
+	GLuint IBO;
+	GLuint VAO;
 };
 
 #endif // !DARKNEC_RENDERERDEFERREDPHONG_H

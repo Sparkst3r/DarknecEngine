@@ -65,7 +65,7 @@ void ComponentCamera::update() {
 	glm::mat4 mat = this->generateViewMatrix();
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(mat));
 	glm::mat3 v_inv = glm::inverse(glm::mat3(mat));
-	sys3->getShader("Text").setUniformFloatMatrix3("inv", false, v_inv);
+	//sys3->getShader("Text").setUniformFloatMatrix3("inv", false, v_inv);
 }
 
 
@@ -82,6 +82,11 @@ glm::mat4 ComponentCamera::generateProjMatrix() {
 
 		return glm::perspective(FOV_, aspect, frustrumNearClip_, frustrumFarClip_);
 	}
+	else {
+		Darknec::logger(Darknec::LOG_WARN, "Camera projection type set to unknown value.");
+		return glm::mat4();
+	}
+
 
 }
 glm::mat4 ComponentCamera::generateViewMatrix() {
@@ -108,7 +113,7 @@ void ComponentCamera::offsetDistance(float offsetDistance) {
 }
 
 bool ComponentCamera::getProjType() const {
-	return projectionType_;
+	return projectionType_ == PERSPECTIVE ? false : true;
 }
 void ComponentCamera::setProjType(ComponentCamera::ProjType projType) {
 	projectionType_ = projType;

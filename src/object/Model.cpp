@@ -51,7 +51,7 @@ Texture Material::getTex(MATERIALDATA dataKey) {
 	if (dataKey >= MATERIALDATA::TEXTURE_DIFFUSE && dataKey <= MATERIALDATA::TEXTURE_PARALLAX) {
 		return this->textures_[dataKey];
 	}
-	return Texture();
+	return Texture(GL_TEXTURE_2D);
 }
 glm::vec4 Material::getCol(MATERIALDATA dataKey) {
 	if (dataKey >= MATERIALDATA::COLOUR_AMBIENT && dataKey <= MATERIALDATA::COLOUR_TRANSPARANT) {

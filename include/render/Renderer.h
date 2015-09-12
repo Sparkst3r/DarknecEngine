@@ -8,6 +8,11 @@ public:
 
 	virtual void render(Model model) = 0;
 
+	virtual void frameStepBefore() = 0;
+	virtual void frameStepAfter() = 0;
+
+	virtual void init() = 0;
+
 
 };
 

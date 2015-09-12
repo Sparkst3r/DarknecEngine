@@ -1,8 +1,33 @@
 #include <render/RendererForwardPhong.h>
 
+RendererForwardPhong::RendererForwardPhong() {
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void RendererForwardPhong::init() {
+
+}
+
+void RendererForwardPhong::frameStepBefore() {
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glClearColor(0, 0, 0, 0);
+	glViewport(0, 0, Darknec::WindowWidth, Darknec::WindowHeight);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+}
+void RendererForwardPhong::frameStepAfter() {
+
+}
+
+
 void RendererForwardPhong::render(Model model) {
-
-
+	
 	sys3->useShader("Text");
 
 
